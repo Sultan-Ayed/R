@@ -191,40 +191,145 @@ const IMG_IDS=[10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,19
 
 /* ── SPELLING DICTIONARY ── */
 const SPELL={
+  // Buildings & places
   "bilding":"building","buidling":"building","biulding":"building","biuldings":"buildings",
-  "dizin":"design","desing":"design","dezign":"design",
-  "peple":"people","pepole":"people","poeple":"people",
-  "beutiful":"beautiful","beautifull":"beautiful","beatiful":"beautiful","beautyful":"beautiful","beatifull":"beautiful",
-  "intresting":"interesting","intersting":"interesting","intresing":"interesting",
-  "becuse":"because","becose":"because","becaus":"because",
-  "freind":"friend","frend":"friend","firend":"friend",
-  "writeing":"writing","writting":"writing",
+  "bildings":"buildings","buildng":"building","bldng":"building",
+  "hous":"house","hose":"house","houes":"house","housse":"house",
+  "stret":"street","sreet":"street","stree":"street","streat":"street",
+  "brij":"bridge","bridg":"bridge","brigde":"bridge",
+  "chursh":"church","chuch":"church","chirch":"church",
+  "moskue":"mosque","moske":"mosque","masque":"mosque",
+  "windoe":"window","windw":"window","wndow":"window","windo":"window",
+  "dore":"door","dor":"door","dooor":"door",
+  "florr":"floor","flore":"floor","foor":"floor",
+  "celing":"ceiling","ceeling":"ceiling","cieling":"ceiling",
+  "wale":"wall","wal":"wall","wwall":"wall",
+  "staris":"stairs","stares":"stairs","stear":"stair",
+  "rouf":"roof","rof":"roof","rooof":"roof",
+  // Nature
+  "floer":"flower","flwer":"flower","flowe":"flower","flowre":"flower","fower":"flower","flouer":"flower",
+  "floers":"flowers","flwers":"flowers","flowes":"flowers","fowers":"flowers",
+  "tress":"trees","tre":"tree","treee":"tree","trre":"tree",
+  "lief":"leaf","leef":"leaf","leav":"leaf",
+  "leives":"leaves","leafs":"leaves","leavs":"leaves",
+  "gras":"grass","grss":"grass","grases":"grasses",
+  "mountan":"mountain","mountian":"mountain","moutain":"mountain","montain":"mountain","mountin":"mountain",
+  "mountans":"mountains","mountians":"mountains","moutains":"mountains",
+  "rivr":"river","rivver":"river","rvier":"river",
+  "laek":"lake","lak":"lake","lakee":"lake",
+  "oshean":"ocean","ocen":"ocean","ocaen":"ocean","oceaan":"ocean",
+  "beech":"beach","beatch":"beach","bech":"beach",
+  "forst":"forest","forrest":"forest","forset":"forest",
+  "cloude":"cloud","clod":"cloud","clud":"cloud","cloudd":"cloud",
+  "cloudes":"clouds","clods":"clouds","cluds":"clouds",
+  "sno":"snow","snoe":"snow","snwo":"snow",
+  "rian":"rain","raen":"rain","rein":"rain",
+  "sunlght":"sunlight","sunlite":"sunlight","sunligt":"sunlight",
+  "snad":"sand","samd":"sand","sannd":"sand",
+  "rok":"rock","rck":"rock","roke":"rock",
+  "wter":"water","watr":"water","watter":"water",
+  "fier":"fire","fre":"fire","fyre":"fire",
+  // Colors
+  "gren":"green","grene":"green","greem":"green",
+  "bloo":"blue","bleu":"blue","bule":"blue",
+  "redd":"red","rede":"red","reedd":"red",
+  "yelo":"yellow","yellw":"yellow","yelow":"yellow","yallow":"yellow",
+  "oranje":"orange","orang":"orange","orenge":"orange",
+  "pruple":"purple","purpl":"purple","perple":"purple","purpel":"purple",
+  "pinck":"pink","pnik":"pink","pnk":"pink",
+  "wite":"white","whte":"white","withe":"white","whiet":"white",
+  "blakc":"black","blck":"black","balck":"black",
+  "graey":"grey","gery":"grey","grye":"grey","grai":"gray",
+  "browen":"brown","brwn":"brown","bron":"brown","borwn":"brown",
+  // Animals
+  "animel":"animal","animale":"animal","annimal":"animal",
+  "doge":"dog","dogg":"dog","doog":"dog",
+  "catt":"cat","kat":"cat","katt":"cat",
+  "brid":"bird","brird":"bird","berd":"bird",
+  "fsh":"fish","fisch":"fish","fiish":"fish",
+  "hrose":"horse","hors":"horse","hoarse":"horse",
+  "berd":"bird",
+  // People & actions
+  "peple":"people","pepole":"people","poeple":"people","peopl":"people","pepel":"people",
+  "peson":"person","persn":"person","persone":"person","persom":"person",
+  "chid":"child","childe":"child","chiled":"child",
+  "childs":"children","childrens":"children",
+  "wman":"woman","womam":"woman","wooman":"woman",
+  "mam":"man","maan":"man","mann":"man",
+  "siting":"sitting","sitng":"sitting","sittng":"sitting",
+  "standig":"standing","standng":"standing","staning":"standing",
+  "walkng":"walking","walknig":"walking","waking":"walking",
+  "runing":"running","rnning":"running","ruunning":"running",
+  "smilling":"smiling","smilng":"smiling","smilling":"smiling",
+  "lookin":"looking","lookng":"looking","locking":"looking",
+  "wering":"wearing","wearng":"wearing","wearring":"wearing",
+  "holdig":"holding","holdng":"holding","hodling":"holding",
+  "ridng":"riding","rideing":"riding","rding":"riding",
+  "eatng":"eating","eatting":"eating","eaing":"eating",
+  "drinkng":"drinking","drinkig":"drinking","drnking":"drinking",
+  "talkng":"talking","talkig":"talking","taling":"talking",
+  "plaing":"playing","playng":"playing","plying":"playing",
+  "wrking":"working","workng":"working","woring":"working",
+  "slepng":"sleeping","sleepng":"sleeping","sleping":"sleeping",
+  "swmming":"swimming","swimmng":"swimming","swimng":"swimming",
+  // Design & objects
+  "dizin":"design","desing":"design","dezign":"design","desig":"design",
+  "styl":"style","stile":"style","styel":"style",
+  "colr":"color","collor":"color","colore":"color","coulor":"color",
+  "sizze":"size","siz":"size","siize":"size",
+  "shaep":"shape","shpe":"shape","sahpe":"shape",
+  "phto":"photo","phooto":"photo","phoot":"photo",
+  "pictur":"picture","pictuer":"picture","picter":"picture","picrure":"picture",
+  "imagge":"image","imge":"image","iamge":"image",
+  // Common words
+  "beutiful":"beautiful","beautifull":"beautiful","beatiful":"beautiful","beautyful":"beautiful","beatifull":"beautiful","beutifull":"beautiful",
+  "intresting":"interesting","intersting":"interesting","intresing":"interesting","interestring":"interesting",
+  "becuse":"because","becose":"because","becaus":"because","beacuse":"because","becasue":"because",
+  "freind":"friend","frend":"friend","firend":"friend","freidn":"friend",
+  "writeing":"writing","writting":"writing","writng":"writing",
   "haveing":"having","comeing":"coming","comming":"coming",
-  "recieve":"receive","recive":"receive",
-  "seperate":"separate","seprate":"separate",
-  "definately":"definitely","definitly":"definitely","definetly":"definitely",
+  "recieve":"receive","recive":"receive","recevie":"receive",
+  "seperate":"separate","seprate":"separate","separete":"separate",
+  "definately":"definitely","definitly":"definitely","definetly":"definitely","defenitely":"definitely",
   "goverment":"government","enviroment":"environment","enviorment":"environment",
-  "wierd":"weird","wich":"which","whith":"with",
-  "teh":"the","hte":"the","adn":"and","nad":"and","taht":"that",
-  "thier":"their","alot":"a lot",
-  "doesnt":"doesn't","dont":"don't","cant":"can't","wont":"won't","isnt":"isn't","wasnt":"wasn't","shouldnt":"shouldn't",
+  "wierd":"weird","wich":"which","whith":"with","wih":"with",
+  "teh":"the","hte":"the","adn":"and","nad":"and","taht":"that","thta":"that",
+  "thier":"their","alot":"a lot","allot":"a lot",
+  "doesnt":"doesn't","dont":"don't","cant":"can't","wont":"won't","isnt":"isn't","wasnt":"wasn't","shouldnt":"shouldn't","couldnt":"couldn't","wouldnt":"wouldn't",
   "im":"I'm","iam":"I am",
-  "cloude":"cloud","clod":"cloud",
-  "hight":"height","higth":"height",
-  "biger":"bigger","mroe":"more",
-  "vrey":"very","veyr":"very","vry":"very",
-  "loks":"looks","lok":"look",
-  "smal":"small","smale":"small",
-  "tress":"trees","mountan":"mountain","mountian":"mountain","moutain":"mountain",
-  "peson":"person","persn":"person",
-  "siting":"sitting","standig":"standing","walkng":"walking",
-  "windoe":"window","windw":"window",
-  "carefull":"careful","usefull":"useful","helpfull":"helpful","beautifuly":"beautifully",
-  "realy":"really","actualy":"actually","generaly":"generally","usualy":"usually",
+  "hight":"height","higth":"height","heigth":"height","heigh":"height",
+  "biger":"bigger","mroe":"more","moer":"more",
+  "vrey":"very","veyr":"very","vry":"very","verry":"very",
+  "loks":"looks","lok":"look","loook":"look",
+  "smal":"small","smale":"small","smll":"small",
+  "carefull":"careful","usefull":"useful","helpfull":"helpful","beautifuly":"beautifully","wonderfull":"wonderful","powerfull":"powerful","peacefull":"peaceful","successfull":"successful",
+  "realy":"really","actualy":"actually","generaly":"generally","usualy":"usually","normaly":"normally","finaly":"finally","totaly":"totally","absolutly":"absolutely",
   "grammer":"grammar","sentance":"sentence","discribe":"describe","discription":"description",
   "explane":"explain","explaination":"explanation","independant":"independent",
   "occurence":"occurrence","millenium":"millennium","neccessary":"necessary","necesary":"necessary",
-  "untill":"until","allready":"already","alright":"all right","eventhough":"even though",
+  "untill":"until","allready":"already","eventhough":"even though",
+  "happey":"happy","happi":"happy","hapy":"happy","happpy":"happy",
+  "sadde":"sad","sadd":"sad",
+  "angy":"angry","angrey":"angry","angrry":"angry",
+  "tierd":"tired","tirred":"tired","tyred":"tired",
+  "hungrey":"hungry","hungy":"hungry","hungery":"hungry",
+  "scred":"scared","scarred":"scared","scard":"scared",
+  "exited":"excited","excitted":"excited","exciited":"excited",
+  "intresting":"interesting","borring":"boring","boreing":"boring",
+  "nise":"nice","niec":"nice","niice":"nice",
+  "larg":"large","lagre":"large","laege":"large",
+  "smalle":"small","samll":"small",
+  "talle":"tall","tal":"tall","tal":"tall",
+  "shrot":"short","shrot":"short","shotr":"short",
+  "neer":"near","ner":"near","naer":"near",
+  "fer":"far","faar":"far","farr":"far",
+  "hgih":"high","hih":"high","hiigh":"high",
+  "lwo":"low","lwow":"low","loow":"low",
+  "fsat":"fast","fats":"fast","fasst":"fast",
+  "slwo":"slow","sloow":"slow","sllow":"slow",
+  "bigg":"big","bige":"big","biig":"big",
+  // cry/dry confusion
+  "cry":"cry",// keep — valid word
 };
 
 /* ── GRAMMAR PATTERNS ── */
@@ -311,8 +416,8 @@ function autoRewrite(text){
   t=t.replace(/\bmust\s+to\b/gi,"must");
   t=t.replace(/\bdiscuss\s+about\b/gi,"discuss");
   t=t.replace(/\bexplain\s+about\b/gi,"explain");
-  // fix lonely "i" -> "I"
-  t=t.replace(/\bi\b/g,"I");
+  // fix lonely "i" -> "I" (standalone pronoun)
+  t=t.replace(/(?<![a-zA-Z])\bi\b(?![a-zA-Z])/g,"I");
   // ensure ending punctuation
   const tr=t.trim();
   if(tr.length>10&&!/[.!?]$/.test(tr)) t=tr+".";
@@ -327,16 +432,22 @@ function analyze(text,level){
   words.forEach(raw=>{
     const c=raw.toLowerCase().replace(/[^a-z']/g,"");
     if(c.length<2||seen.has(c)) return;
+    // Skip "cry" and other valid common words
+    const valid=new Set(["cry","dry","fly","fry","try","shy","sky","spy","sly","pry","why","gym","ivy","elm"]);
+    if(valid.has(c)) return;
     if(SPELL[c]){seen.add(c);spellingErrors.push({wrong:raw,correct:SPELL[c],explanation:`"${raw}" is misspelled. The correct spelling is "${SPELL[c]}".`});}
   });
 
+  // Detect standalone lowercase "i" (should be capital "I")
+  const lowerI = /(?<![a-z])\bi\b(?![a-z])/g;
+  if(lowerI.test(text) && !seen.has("i_cap")){
+    seen.add("i_cap");
+    spellingErrors.unshift({wrong:"i (lowercase)",correct:"I (capital)",explanation:'The pronoun "I" must always be written with a capital letter in English.'});
+  }
+
   const grammarErrors=[];
   GRAMMAR.forEach(({re,w,r,n})=>{
-    if(re.test(text)){
-      // reset regex
-      re.lastIndex=0;
-      grammarErrors.push({wrong:w,correct:r,explanation:n});
-    }
+    if(re.test(text)){re.lastIndex=0;grammarErrors.push({wrong:w,correct:r,explanation:n});}
     re.lastIndex=0;
   });
 
