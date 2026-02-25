@@ -1,200 +1,491 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WriteUp - English Writing Practice</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/nspell/index.js"></script>
-    <script src="https://unpkg.com/dictionary-en/index.js"></script>
-    <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f7f3eb; color: #1a1a1a; scroll-behavior: smooth; }
-        .serif { font-family: 'Playfair Display', serif; }
-        .level-card { transition: all 0.3s ease; cursor: pointer; border: 2px solid transparent; }
-        .level-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .level-card.selected { border-color: #d4af37; background-color: #fff; transform: scale(1.02); }
-        .btn-start { background-color: #ccc; transition: all 0.3s; }
-        .btn-start.active { background-color: #1a1a1a; color: white; cursor: pointer; }
-        .correction-highlight { background-color: #fee2e2; border-bottom: 2px solid #ef4444; font-weight: 600; padding: 0 2px; }
-        .suggestion-chip { background-color: #f3f4f6; padding: 2px 8px; border-radius: 4px; font-weight: bold; color: #1f2937; }
-    </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>WriteUp — English Writing Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f5f0e8;font-family:'DM Sans',system-ui,sans-serif;color:#0a0a0f;min-height:100vh}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+textarea:focus,button:focus{outline:none}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:#c9a84c;border-radius:3px}
+.header{padding:1.3rem 2.5rem;border-bottom:1px solid rgba(0,0,0,0.09);display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Playfair Display',serif;font-size:1.85rem;font-weight:900;letter-spacing:-0.03em}
+.logo span{color:#c9a84c}
+.tagline{font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:#8a7f70}
+.main{max-width:860px;margin:0 auto;padding:2rem 1.5rem 5rem}
+.screen{display:none;animation:fadeUp 0.4s ease}
+.screen.active{display:block}
+.hero{text-align:center;margin-bottom:2.8rem}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,4.5vw,3rem);font-weight:900;line-height:1.1;margin-bottom:.7rem}
+.hero p{color:#8a7f70;font-size:1rem;line-height:1.75;max-width:450px;margin:0 auto}
+.levels-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(225px,1fr));gap:1rem;margin-bottom:2.5rem}
+.lvl-card{background:white;border:2px solid rgba(0,0,0,0.1);border-radius:6px;padding:1.4rem 1.2rem;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.lvl-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.08)}
+.lvl-card.sel{background:#fffdf5;transform:translateY(-3px)}
+.lvl-card .bar{position:absolute;bottom:0;left:0;right:0;height:3px;transform:scaleX(0);transition:transform .2s}
+.lvl-card.sel .bar{transform:scaleX(1)}
+.lvl-badge{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;line-height:1}
+.lvl-name{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;margin:.35rem 0 .45rem}
+.lvl-desc{font-size:.79rem;color:#8a7f70;line-height:1.55}
+.start-btn{display:block;margin:0 auto;padding:.85rem 3rem;background:#0a0a0f;color:#f5f0e8;border:none;border-radius:5px;font-family:inherit;font-size:1rem;font-weight:500;cursor:pointer;transition:background .2s;letter-spacing:.03em}
+.start-btn:disabled{background:#ccc;color:#888;cursor:not-allowed}
+.start-btn:not(:disabled):hover{background:#c9a84c;color:#0a0a0f}
+.practice-header{display:flex;align-items:center;gap:.9rem;margin-bottom:2rem;flex-wrap:wrap}
+.back-btn{background:none;border:1.5px solid rgba(0,0,0,0.14);border-radius:5px;padding:.42rem .9rem;font-family:inherit;font-size:.84rem;cursor:pointer;transition:border-color .2s}
+.back-btn:hover{border-color:#0a0a0f}
+.lvl-tag{font-family:'Playfair Display',serif;font-weight:700;border-radius:4px;padding:.2rem .75rem;font-size:.95rem;border:1.5px solid}
+.practice-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+.img-frame{border-radius:6px;overflow:hidden;border:1.5px solid rgba(0,0,0,0.1);background:#ede8db;aspect-ratio:4/3;position:relative}
+.img-frame img{width:100%;height:100%;object-fit:cover;transition:opacity .4s}
+.img-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.spin{width:28px;height:28px;border:3px solid #ede8db;border-top-color:#c9a84c;border-radius:50%;animation:spin .8s linear infinite}
+.new-img-btn{margin-top:.6rem;width:100%;background:none;border:1.5px solid rgba(0,0,0,0.12);border-radius:5px;padding:.5rem;font-family:inherit;font-size:.82rem;color:#8a7f70;cursor:pointer;transition:all .2s}
+.new-img-btn:hover{border-color:#8a7f70;color:#4a4540}
+.task-label{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:#8a7f70;margin-bottom:.5rem}
+.task-prompt{border-left:3px solid;border-radius:0 5px 5px 0;padding:.75rem 1rem;margin-bottom:1rem;font-size:.87rem;color:#4a4540;line-height:1.65;background:#ede8db}
+textarea{width:100%;min-height:185px;padding:1rem;border:1.5px solid rgba(0,0,0,0.12);border-radius:5px;font-family:inherit;font-size:.94rem;line-height:1.75;color:#0a0a0f;background:white;resize:vertical;transition:border-color .2s}
+textarea:focus{border-color:#c9a84c}
+.wcount{font-size:.77rem;font-weight:500;margin-top:.45rem;margin-bottom:.85rem}
+.check-btn{width:100%;padding:.95rem;background:#4a7c6f;color:white;border:none;border-radius:5px;font-family:inherit;font-size:.97rem;font-weight:500;cursor:pointer;transition:background .2s}
+.check-btn:disabled{background:#ccc;cursor:not-allowed}
+.check-btn:not(:disabled):hover{background:#3a6b5f}
+.loading-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:1.2rem}
+.loading-screen .bigspin{width:40px;height:40px;border:3.5px solid #ede8db;border-top-color:#c9a84c;border-radius:50%;animation:spin .8s linear infinite}
+.loading-screen p{font-family:'Playfair Display',serif;font-size:1.05rem;color:#8a7f70}
+.result-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2rem;gap:1rem;flex-wrap:wrap}
+.result-top h2{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;line-height:1.1}
+.result-top .enc{color:#4a7c6f;margin-top:.4rem;font-size:.89rem;font-style:italic;max-width:480px}
+.score-ring{position:relative;width:90px;height:90px;flex-shrink:0}
+.score-ring svg{transform:rotate(-90deg)}
+.score-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-num{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;line-height:1}
+.score-sub{font-size:.62rem;color:#8a7f70}
+.original-box{background:#ede8db;border-left:3px solid rgba(0,0,0,0.18);border-radius:0 5px 5px 0;padding:.95rem 1.3rem;margin-bottom:2rem}
+.original-box .olabel{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:#8a7f70;font-weight:600;margin-bottom:.45rem}
+.original-box p{font-size:.92rem;line-height:1.85}
+.corr-card{background:white;border:1.5px solid rgba(0,0,0,0.1);border-radius:6px;overflow:hidden;margin-bottom:1.1rem;animation:fadeUp .4s ease both}
+.corr-head{display:flex;align-items:center;gap:.75rem;padding:.85rem 1.3rem;background:#f5f0e8;border-bottom:1.5px solid rgba(0,0,0,0.08)}
+.corr-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.92rem;font-weight:700;flex-shrink:0}
+.corr-title{font-weight:600;font-size:.94rem}
+.corr-badge{margin-left:auto;font-size:.72rem;font-weight:700;padding:.15rem .65rem;border-radius:20px}
+.corr-body{padding:1.1rem 1.3rem}
+.no-err{color:#4a7c6f;font-weight:500;font-size:.88rem}
+.err-list{list-style:none;display:flex;flex-direction:column;gap:.9rem}
+.err-item{display:grid;grid-template-columns:10px 1fr;gap:.75rem;font-size:.87rem;line-height:1.65}
+.dot{width:8px;height:8px;border-radius:50%;margin-top:.5rem;display:block;flex-shrink:0}
+.err-wrong{color:#c0512f;text-decoration:line-through;font-weight:500}
+.err-right{color:#4a7c6f;font-weight:600}
+.err-note{color:#8a7f70}
+.rewrite-box{background:#fffdf5;border:1.5px dashed #c9a84c;border-radius:5px;padding:1rem 1.2rem;font-size:.95rem;line-height:1.9;color:#0a0a0f;margin-top:.7rem}
+.action-row{display:flex;gap:1rem;margin-top:1.5rem;flex-wrap:wrap}
+.action-row button{flex:1;padding:.9rem;border-radius:5px;font-family:inherit;font-size:.94rem;font-weight:500;cursor:pointer;transition:all .2s}
+.btn-dark{border:none;background:#0a0a0f;color:#f5f0e8}
+.btn-dark:hover{background:#c9a84c;color:#0a0a0f}
+.btn-ghost{background:white;color:#0a0a0f;border:1.5px solid rgba(0,0,0,0.15)}
+.btn-ghost:hover{border-color:#0a0a0f}
+@media(max-width:620px){.header{padding:1.1rem 1.2rem}.practice-grid{grid-template-columns:1fr}}
+</style>
 </head>
-<body class="p-4 md:p-10">
+<body>
 
-    <header class="flex justify-between items-center max-w-6xl mx-auto mb-16">
-        <div class="text-2xl font-bold serif italic cursor-pointer" onclick="location.reload()">Write<span class="text-yellow-600">Up</span></div>
-        <div class="text-xs tracking-widest text-gray-500 uppercase">English Writing Practice</div>
-    </header>
+<header class="header">
+  <div class="logo">Write<span>Up</span></div>
+  <div class="tagline">English Writing Practice</div>
+</header>
 
-    <main id="selection-screen" class="max-w-5xl mx-auto text-center">
-        <h1 class="text-5xl md:text-6xl serif mb-6">Choose Your Writing Level</h1>
-        <p class="text-gray-500 mb-12 max-w-2xl mx-auto italic">Pick your level, describe a random image, and get instant AI feedback on your English writing.</p>
+<!-- LEVEL -->
+<div id="s-level" class="screen main active">
+  <div class="hero">
+    <h1>Choose Your<br/>Writing Level</h1>
+    <p>Pick your level, describe a random image, and get instant feedback on your English writing.</p>
+  </div>
+  <div class="levels-grid" id="levels-grid"></div>
+  <button class="start-btn" id="start-btn" disabled onclick="goToPractice()">Start Writing Practice →</button>
+</div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 text-left">
-            <div onclick="selectLevel('A1')" class="level-card bg-white p-8 rounded-xl shadow-sm">
-                <h3 class="text-3xl font-bold text-green-600 mb-2">A1</h3>
-                <p class="font-bold uppercase text-xs tracking-wider mb-4">Beginner</p>
-                <p class="text-sm text-gray-500">Write 2-3 simple sentences. What do you see in the image?</p>
-            </div>
-            <div onclick="selectLevel('A2')" class="level-card bg-white p-8 rounded-xl shadow-sm">
-                <h3 class="text-3xl font-bold text-blue-400 mb-2">A2</h3>
-                <p class="font-bold uppercase text-xs tracking-wider mb-4">Elementary</p>
-                <p class="text-sm text-gray-500">Write 3-5 sentences. Describe the people, place, or objects...</p>
-            </div>
-            <div onclick="selectLevel('B1')" class="level-card bg-white p-8 rounded-xl shadow-sm">
-                <h3 class="text-3xl font-bold text-yellow-600 mb-2">B1</h3>
-                <p class="font-bold uppercase text-xs tracking-wider mb-4">Intermediate</p>
-                <p class="text-sm text-gray-500">Write a short paragraph (5-8 sentences). What is happening...</p>
-            </div>
-            <div onclick="selectLevel('B2')" class="level-card bg-white p-8 rounded-xl shadow-sm">
-                <h3 class="text-3xl font-bold text-orange-600 mb-2">B2</h3>
-                <p class="font-bold uppercase text-xs tracking-wider mb-4">Upper-Intermediate</p>
-                <p class="text-sm text-gray-500">Write 2 paragraphs: describe the scene, then share your thoughts...</p>
-            </div>
-            <div onclick="selectLevel('C1')" class="level-card bg-white p-8 rounded-xl shadow-sm">
-                <h3 class="text-3xl font-bold text-purple-600 mb-2">C1</h3>
-                <p class="font-bold uppercase text-xs tracking-wider mb-4">Advanced</p>
-                <p class="text-sm text-gray-500">Write 2-3 detailed paragraphs. Describe vividly, analyze the...</p>
-            </div>
-            <div onclick="selectLevel('C2')" class="level-card bg-white p-8 rounded-xl shadow-sm">
-                <h3 class="text-3xl font-bold text-red-700 mb-2">C2</h3>
-                <p class="font-bold uppercase text-xs tracking-wider mb-4">Mastery</p>
-                <p class="text-sm text-gray-500">Write an expressive piece. Use rich vocabulary, varied structure...</p>
-            </div>
-        </div>
+<!-- PRACTICE -->
+<div id="s-practice" class="screen main">
+  <div class="practice-header">
+    <button class="back-btn" onclick="show('level')">← Back</button>
+    <span class="lvl-tag" id="lvl-tag"></span>
+  </div>
+  <div class="practice-grid">
+    <div>
+      <div class="img-frame" id="img-frame">
+        <div class="img-loading"><div class="spin"></div></div>
+        <img id="pimg" src="" alt="Describe this" style="opacity:0" onload="imgOk()" onerror="imgErr()"/>
+      </div>
+      <button class="new-img-btn" onclick="loadImg()">↻ New Image</button>
+    </div>
+    <div style="display:flex;flex-direction:column">
+      <div class="task-label">Your Task</div>
+      <div class="task-prompt" id="task-prompt"></div>
+      <textarea id="utext" placeholder="Write your description here…" oninput="wcUpdate()"></textarea>
+      <div class="wcount" id="wcount" style="color:#8a7f70">0 words</div>
+      <button class="check-btn" id="check-btn" disabled onclick="doCheck()">✓ Check My Writing</button>
+    </div>
+  </div>
+</div>
 
-        <button id="start-btn" disabled class="btn-start px-12 py-4 rounded text-gray-500 font-medium text-lg shadow-lg">
-            Start Writing Practice →
-        </button>
-    </main>
+<!-- LOADING -->
+<div id="s-loading" class="screen main">
+  <div class="loading-screen">
+    <div class="bigspin"></div>
+    <p id="load-msg">Analyzing your writing…</p>
+  </div>
+</div>
 
-    <section id="practice-screen" class="hidden max-w-5xl mx-auto">
-        <div class="bg-white p-6 md:p-10 rounded-2xl shadow-xl">
-            <div class="grid md:grid-cols-2 gap-10">
-                <div>
-                    <div class="sticky top-10">
-                        <img id="random-img" src="" class="rounded-xl shadow-lg mb-4 w-full aspect-video object-cover">
-                        <div class="flex justify-between items-center">
-                            <p class="text-sm text-gray-400 italic font-serif">Topic: Nature & Landscapes</p>
-                            <span id="badge-lvl" class="px-3 py-1 bg-gray-100 text-xs font-bold rounded-full uppercase tracking-tighter text-gray-600">Level: A1</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex flex-col">
-                    <h2 class="text-2xl serif mb-4">Your Description</h2>
-                    <textarea id="user-text" class="w-full h-64 p-5 border-2 border-gray-100 rounded-xl focus:border-yellow-500 outline-none transition-all leading-relaxed text-lg" placeholder="Start typing here (e.g., The picther is butfil)..."></textarea>
-                    <button id="check-btn" onclick="checkResult()" class="w-full mt-6 bg-yellow-700 text-white py-4 rounded-xl font-bold hover:bg-yellow-800 shadow-md transition-all active:scale-95">Analyze My Writing</button>
-                    <button onclick="location.reload()" class="mt-4 text-gray-400 text-sm hover:text-black transition">← Back to Levels</button>
-                </div>
-            </div>
+<!-- RESULT -->
+<div id="s-result" class="screen main">
+  <div class="practice-header">
+    <button class="back-btn" onclick="show('practice')">← Edit</button>
+    <span class="lvl-tag" id="lvl-tag2"></span>
+  </div>
+  <div class="result-top">
+    <div>
+      <h2>Writing Feedback</h2>
+      <p class="enc" id="enc-msg"></p>
+    </div>
+    <div class="score-ring">
+      <svg width="90" height="90" viewBox="0 0 90 90">
+        <circle cx="45" cy="45" r="36" fill="none" stroke="#ede8db" stroke-width="6"/>
+        <circle id="score-arc" cx="45" cy="45" r="36" fill="none" stroke="#c9a84c" stroke-width="6" stroke-linecap="round" stroke-dasharray="0 999"/>
+      </svg>
+      <div class="score-center">
+        <span class="score-num" id="score-num">–</span>
+        <span class="score-sub">/ 100</span>
+      </div>
+    </div>
+  </div>
+  <div class="original-box">
+    <div class="olabel">Your Writing</div>
+    <p id="orig-text"></p>
+  </div>
+  <div id="corrections"></div>
+  <div class="action-row">
+    <button class="btn-dark" onclick="tryAgain()">Try Same Image Again</button>
+    <button class="btn-ghost" onclick="newTopic()">New Image →</button>
+  </div>
+</div>
 
-            <div id="result-area" class="hidden mt-12 border-t pt-10">
-                <h3 class="text-3xl serif mb-6">Writing Analysis</h3>
-                <div id="feedback-content" class="space-y-6"></div>
-            </div>
-        </div>
-    </section>
+<script>
+/* ── LEVELS ── */
+const LEVELS = {
+  A1:{ label:"Beginner",           color:"#5aab6e", min:8,   prompt:"Write 2–3 simple sentences. What do you see in the image?" },
+  A2:{ label:"Elementary",         color:"#3d9dbf", min:20,  prompt:"Write 3–5 sentences. Describe the people, place, or objects you see." },
+  B1:{ label:"Intermediate",       color:"#c9a84c", min:45,  prompt:"Write a short paragraph (5–8 sentences). What is happening and where?" },
+  B2:{ label:"Upper-Intermediate", color:"#d4845a", min:75,  prompt:"Write 2 paragraphs: describe the scene, then share your thoughts about it." },
+  C1:{ label:"Advanced",           color:"#9b6dbd", min:110, prompt:"Write 2–3 detailed paragraphs. Describe vividly, analyze the mood, and tell the story." },
+  C2:{ label:"Mastery",            color:"#c0512f", min:160, prompt:"Write an expressive piece using rich vocabulary, complex structures, and deeper meaning." },
+};
 
-    <script>
-        let selectedLvl = null;
-        let spellChecker = null;
+/* ── IMAGE IDS ── */
+const IMG_IDS=[10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200,
+  210,220,230,240,250,260,270,280,290,300,310,320,330,340,350,360,370,380,390,400,
+  410,420,430,440,450,460,470,480,490,500,514,520,534,540,550,560,570,580,590,600];
 
-        // تحميل القاموس عند بدء التشغيل
-        window.dictionaryEn((err, dict) => {
-            if (dict) spellChecker = window.nspell(dict);
-        });
+/* ── SPELLING DICTIONARY ── */
+const SPELL={
+  "bilding":"building","buidling":"building","biulding":"building","biuldings":"buildings",
+  "dizin":"design","desing":"design","dezign":"design",
+  "peple":"people","pepole":"people","poeple":"people",
+  "beutiful":"beautiful","beautifull":"beautiful","beatiful":"beautiful","beautyful":"beautiful","beatifull":"beautiful",
+  "intresting":"interesting","intersting":"interesting","intresing":"interesting",
+  "becuse":"because","becose":"because","becaus":"because",
+  "freind":"friend","frend":"friend","firend":"friend",
+  "writeing":"writing","writting":"writing",
+  "haveing":"having","comeing":"coming","comming":"coming",
+  "recieve":"receive","recive":"receive",
+  "seperate":"separate","seprate":"separate",
+  "definately":"definitely","definitly":"definitely","definetly":"definitely",
+  "goverment":"government","enviroment":"environment","enviorment":"environment",
+  "wierd":"weird","wich":"which","whith":"with",
+  "teh":"the","hte":"the","adn":"and","nad":"and","taht":"that",
+  "thier":"their","alot":"a lot",
+  "doesnt":"doesn't","dont":"don't","cant":"can't","wont":"won't","isnt":"isn't","wasnt":"wasn't","shouldnt":"shouldn't",
+  "im":"I'm","iam":"I am",
+  "cloude":"cloud","clod":"cloud",
+  "hight":"height","higth":"height",
+  "biger":"bigger","mroe":"more",
+  "vrey":"very","veyr":"very","vry":"very",
+  "loks":"looks","lok":"look",
+  "smal":"small","smale":"small",
+  "tress":"trees","mountan":"mountain","mountian":"mountain","moutain":"mountain",
+  "peson":"person","persn":"person",
+  "siting":"sitting","standig":"standing","walkng":"walking",
+  "windoe":"window","windw":"window",
+  "carefull":"careful","usefull":"useful","helpfull":"helpful","beautifuly":"beautifully",
+  "realy":"really","actualy":"actually","generaly":"generally","usualy":"usually",
+  "grammer":"grammar","sentance":"sentence","discribe":"describe","discription":"description",
+  "explane":"explain","explaination":"explanation","independant":"independent",
+  "occurence":"occurrence","millenium":"millennium","neccessary":"necessary","necesary":"necessary",
+  "untill":"until","allready":"already","alright":"all right","eventhough":"even though",
+};
 
-        const imgs = [
-            'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800',
-            'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800',
-            'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800'
-        ];
+/* ── GRAMMAR PATTERNS ── */
+const GRAMMAR=[
+  {re:/\bI\s+is\b/g,       w:"I is",         r:"I am",         n:'Use "am" with "I": "I am…"'},
+  {re:/\bI\s+are\b/g,      w:"I are",        r:"I am",         n:'Use "am" with "I": "I am…"'},
+  {re:/\bhe\s+are\b/gi,    w:"he are",       r:"he is",        n:'"He" is singular. Use "is": "he is…"'},
+  {re:/\bshe\s+are\b/gi,   w:"she are",      r:"she is",       n:'"She" is singular. Use "is": "she is…"'},
+  {re:/\bit\s+are\b/gi,    w:"it are",       r:"it is",        n:'"It" is singular. Use "is": "it is…"'},
+  {re:/\bthey\s+is\b/gi,   w:"they is",      r:"they are",     n:'"They" is plural. Use "are": "they are…"'},
+  {re:/\bwe\s+is\b/gi,     w:"we is",        r:"we are",       n:'"We" is plural. Use "are": "we are…"'},
+  {re:/\bit\s+have\b/gi,   w:"it have",      r:"it has",       n:'"It" uses "has" in third person: "it has…"'},
+  {re:/\bhe\s+have\b/gi,   w:"he have",      r:"he has",       n:'"He" uses "has" in third person: "he has…"'},
+  {re:/\bshe\s+have\b/gi,  w:"she have",     r:"she has",      n:'"She" uses "has" in third person: "she has…"'},
+  {re:/\bhe\s+go\b/gi,     w:"he go",        r:"he goes",      n:'Third-person singular needs "-s": "he goes"'},
+  {re:/\bshe\s+go\b/gi,    w:"she go",       r:"she goes",     n:'Third-person singular needs "-s": "she goes"'},
+  {re:/\band\s+also\b/gi,  w:"and also",     r:"and / also",   n:'"And also" is redundant. Use just "and" or just "also".'},
+  {re:/\balso\s+I\s+see\b/gi,w:"also I see", r:"I also see",   n:'"Also" should come after the subject: "I also see…"'},
+  {re:/\bvery\s+very\b/gi, w:"very very",    r:"extremely",    n:'Avoid repeating "very". Use "extremely" or a stronger word.'},
+  {re:/\bmore\s+better\b/gi,w:"more better", r:"better",       n:'"Better" is already comparative. Don\'t add "more".'},
+  {re:/\bmore\s+bigger\b/gi,w:"more bigger", r:"bigger",       n:'"Bigger" is already comparative. Don\'t add "more".'},
+  {re:/\bcan\s+sees\b/gi,  w:"can sees",     r:"can see",      n:'After modal verbs (can, will, must…) use the base form: "see" not "sees".'},
+  {re:/\bmust\s+to\b/gi,   w:"must to",      r:"must",         n:'"Must" does not need "to". Write: "I must go" not "I must to go".'},
+  {re:/\bdiscuss\s+about\b/gi,w:"discuss about",r:"discuss",   n:'"Discuss" does not need "about": "Let\'s discuss the topic."'},
+  {re:/\bexplain\s+about\b/gi,w:"explain about",r:"explain",   n:'"Explain" does not need "about": "Please explain the idea."'},
+  {re:/\bmarried\s+with\b/gi,w:"married with",r:"married to",  n:'Say "married to", not "married with".'},
+  {re:/\binterested\s+on\b/gi,w:"interested on",r:"interested in",n:'Say "interested in", not "interested on".'},
+  {re:/\bdepend\s+of\b/gi, w:"depend of",    r:"depend on",    n:'Say "depend on", not "depend of".'},
+];
 
-        function selectLevel(lvl) {
-            selectedLvl = lvl;
-            document.querySelectorAll('.level-card').forEach(card => {
-                card.classList.remove('selected');
-                if(card.querySelector('h3').innerText === lvl) card.classList.add('selected');
-            });
-            const btn = document.getElementById('start-btn');
-            btn.disabled = false;
-            btn.classList.add('active');
-            btn.onclick = startPractice;
-        }
+/* ── STYLE TIPS ── */
+function styleTips(text,level){
+  const tips=[];
+  const sents=text.split(/[.!?]+/).filter(s=>s.trim().length>2);
+  const words=text.trim().split(/\s+/);
 
-        function startPractice() {
-            document.getElementById('selection-screen').classList.add('hidden');
-            document.getElementById('practice-screen').classList.remove('hidden');
-            document.getElementById('badge-lvl').innerText = "Level: " + selectedLvl;
-            document.getElementById('random-img').src = imgs[Math.floor(Math.random()*imgs.length)];
-            window.scrollTo(0,0);
-        }
+  // Too many "I" starts
+  if(sents.length>=3){
+    const iCount=sents.filter(s=>/^\s*i\b/i.test(s)).length;
+    if(iCount>=Math.ceil(sents.length*0.7))
+      tips.push({issue:"Too many sentences starting with 'I'",
+        suggestion:'Vary your openings. Try: "In the image…", "The scene shows…", "There is…", "On the left…"'});
+  }
 
-        function checkResult() {
-            const text = document.getElementById('user-text').value.trim();
-            if(!text) return alert("Please write something first!");
-            if(!spellChecker) return alert("Still loading dictionary... wait 2 seconds.");
+  // Overused word
+  const freq={};
+  words.forEach(w=>{const k=w.toLowerCase().replace(/[^a-z]/g,"");if(k.length>3)freq[k]=(freq[k]||0)+1;});
+  const skip=new Set(["this","that","with","have","from","they","there","their","also","very","like","image","picture","scene"]);
+  const over=Object.entries(freq).filter(([w,c])=>c>=3&&!skip.has(w)).sort((a,b)=>b[1]-a[1]);
+  if(over.length)
+    tips.push({issue:`Word "${over[0][0]}" used ${over[0][1]} times`,
+      suggestion:`Avoid repeating the same word. Use synonyms or rephrase the sentence.`});
 
-            const words = text.split(/\s+/);
-            let correctedHtml = "";
-            let suggestions = [];
-            let errorCount = 0;
+  // Short response
+  if(words.length<LEVELS[level].min)
+    tips.push({issue:"Response is shorter than recommended",
+      suggestion:`For level ${level}, try to write at least ${LEVELS[level].min} words to fully practice your English.`});
 
-            words.forEach(word => {
-                // إزالة علامات الترقيم للفحص
-                const cleanWord = word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
-                
-                if (cleanWord && !spellChecker.correct(cleanWord)) {
-                    errorCount++;
-                    const bestGuess = spellChecker.suggest(cleanWord)[0] || "???";
-                    correctedHtml += `<span class="correction-highlight">${word}</span> `;
-                    suggestions.push(`"${cleanWord}" might be wrong. Did you mean <span class="suggestion-chip">${bestGuess}</span>?`);
-                } else {
-                    correctedHtml += `${word} `;
-                }
-            });
+  // No adjectives (longer texts)
+  if(words.length>15&&!/(tall|large|big|small|old|new|beautiful|colorful|dark|bright|crowded|quiet|busy|ancient|modern|high|wide|narrow|long|short|huge|tiny|narrow|curved|straight|round|square|flat|steep|gentle|rough|smooth|shiny|dull|clear|cloudy|sunny|rainy|windy|cold|warm|hot)/i.test(text))
+    tips.push({issue:"No descriptive adjectives found",
+      suggestion:'Add adjectives to paint a vivid picture: "tall building", "cloudy sky", "narrow street", "bright sunlight".'});
 
-            const resultArea = document.getElementById('result-area');
-            resultArea.classList.remove('hidden');
+  return tips.slice(0,3);
+}
 
-            const score = Math.max(0, 10 - errorCount);
-            const accuracy = Math.max(0, 100 - (errorCount * 10));
+/* ── REWRITE HELPER ── */
+function autoRewrite(text){
+  let t=text;
+  Object.entries(SPELL).forEach(([w,r])=>{
+    t=t.replace(new RegExp(`\\b${w}\\b`,"gi"),m=>/^[A-Z]/.test(m)?r[0].toUpperCase()+r.slice(1):r);
+  });
+  // a/an
+  t=t.replace(/\ba\s+([aeiouAEIOU]\w)/g,"an $1");
+  t=t.replace(/\ban\s+([^aeiouAEIOU\s]\w)/g,(m,c)=>/^(hour|honest|honour)/i.test(c)?m:"a "+c);
+  // common grammar
+  t=t.replace(/\bI\s+is\b/g,"I am").replace(/\bI\s+are\b/g,"I am");
+  t=t.replace(/\bhe\s+are\b/gi,"he is").replace(/\bshe\s+are\b/gi,"she is");
+  t=t.replace(/\bthey\s+is\b/gi,"they are").replace(/\bwe\s+is\b/gi,"we are");
+  t=t.replace(/\bit\s+have\b/gi,"it has").replace(/\bhe\s+have\b/gi,"he has").replace(/\bshe\s+have\b/gi,"she has");
+  t=t.replace(/\band\s+also\b/gi,"and");
+  t=t.replace(/\balso\s+I\s+see\b/gi,"I also see");
+  t=t.replace(/\bmore\s+better\b/gi,"better").replace(/\bmore\s+bigger\b/gi,"bigger");
+  t=t.replace(/\bmust\s+to\b/gi,"must");
+  t=t.replace(/\bdiscuss\s+about\b/gi,"discuss");
+  t=t.replace(/\bexplain\s+about\b/gi,"explain");
+  // fix lonely "i" -> "I"
+  t=t.replace(/\bi\b/g,"I");
+  // ensure ending punctuation
+  const tr=t.trim();
+  if(tr.length>10&&!/[.!?]$/.test(tr)) t=tr+".";
+  return t;
+}
 
-            document.getElementById('feedback-content').innerHTML = `
-                <div class="grid md:grid-cols-3 gap-6 text-center">
-                    <div class="bg-green-50 p-6 rounded-xl border border-green-100">
-                        <p class="text-xs uppercase text-green-600 font-bold mb-1 tracking-widest">Vocabulary Score</p>
-                        <p class="text-4xl font-bold text-green-800">${score}/10</p>
-                    </div>
-                    <div class="bg-blue-50 p-6 rounded-xl border border-blue-100">
-                        <p class="text-xs uppercase text-blue-600 font-bold mb-1 tracking-widest">Accuracy</p>
-                        <p class="text-4xl font-bold text-blue-800">${accuracy}%</p>
-                    </div>
-                    <div class="bg-yellow-50 p-6 rounded-xl border border-yellow-100">
-                        <p class="text-xs uppercase text-yellow-600 font-bold mb-1 tracking-widest">Level</p>
-                        <p class="text-4xl font-bold text-yellow-800">${selectedLvl}</p>
-                    </div>
-                </div>
+/* ── MAIN ANALYSIS ── */
+function analyze(text,level){
+  const words=text.split(/\s+/);
+  const spellingErrors=[],seen=new Set();
 
-                <div class="bg-gray-50 p-8 rounded-2xl border-2 border-dashed border-gray-200">
-                    <h4 class="font-bold mb-3 text-gray-400 uppercase text-xs tracking-widest">Your Text Analysis</h4>
-                    <p class="text-xl leading-relaxed text-gray-800 font-serif">${correctedHtml}</p>
-                    <p class="mt-4 text-sm text-red-500 italic">* Words in red might have spelling errors.</p>
-                </div>
+  words.forEach(raw=>{
+    const c=raw.toLowerCase().replace(/[^a-z']/g,"");
+    if(c.length<2||seen.has(c)) return;
+    if(SPELL[c]){seen.add(c);spellingErrors.push({wrong:raw,correct:SPELL[c],explanation:`"${raw}" is misspelled. The correct spelling is "${SPELL[c]}".`});}
+  });
 
-                <div class="bg-white p-6 rounded-xl border">
-                    <h4 class="font-bold mb-4 flex items-center">AI Spelling Feedback:</h4>
-                    <ul class="space-y-3 text-gray-600">
-                        ${suggestions.length > 0 
-                            ? suggestions.map(s => `<li class="flex items-start"><span class="mr-2">❌</span> ${s}</li>`).join('') 
-                            : '<li class="flex items-start"><span class="mr-2">✅</span> No spelling errors found! Great job.'}
-                    </ul>
-                </div>
-            `;
+  const grammarErrors=[];
+  GRAMMAR.forEach(({re,w,r,n})=>{
+    if(re.test(text)){
+      // reset regex
+      re.lastIndex=0;
+      grammarErrors.push({wrong:w,correct:r,explanation:n});
+    }
+    re.lastIndex=0;
+  });
 
-            resultArea.scrollIntoView({ behavior: 'smooth' });
-        }
-    </script>
+  // a/an check
+  const aVowel=/\ba\s+([aeiou]\w+)/i.exec(text);
+  if(aVowel) grammarErrors.push({wrong:`a ${aVowel[1]}`,correct:`an ${aVowel[1]}`,explanation:`Use "an" before vowel sounds: "an ${aVowel[1]}".`});
+
+  const anCon=/\ban\s+([^aeiou\s]\w+)/i.exec(text);
+  if(anCon&&!/^(hour|honest|honour)/i.test(anCon[1]))
+    grammarErrors.push({wrong:`an ${anCon[1]}`,correct:`a ${anCon[1]}`,explanation:`Use "a" before consonant sounds: "a ${anCon[1]}".`});
+
+  // missing punctuation
+  if(text.trim().length>20&&!/[.!?]$/.test(text.trim()))
+    grammarErrors.push({wrong:"(no final punctuation)",correct:"End with . or ! or ?",explanation:"Always end sentences with a full stop (.), exclamation mark (!), or question mark (?)."});
+
+  const styleAdvice=styleTips(text,level);
+  const rewrite=autoRewrite(text);
+
+  // Score
+  let score=72;
+  score-=Math.min(18,spellingErrors.length*5);
+  score-=Math.min(14,grammarErrors.filter(e=>!e.wrong.includes("punctuation")).length*4);
+  score-=styleAdvice.length*2;
+  const wc=words.filter(w=>w.length>1).length;
+  if(wc>=LEVELS[level].min*1.2) score+=8;
+  if(spellingErrors.length===0) score+=8;
+  if(grammarErrors.length===0) score+=6;
+  if(styleAdvice.length===0) score+=4;
+  score=Math.max(22,Math.min(100,Math.round(score)));
+
+  const encouragement=score>=90?"Excellent work! Your writing is clear and well-structured. Keep it up!"
+    :score>=75?"Good job! You communicated your ideas well. Review the tips below to improve further."
+    :score>=60?"Nice effort! You're making progress. Study the corrections below carefully."
+    :"Great start! Every mistake is a learning opportunity. Review the feedback and try again!";
+
+  return{score,spellingErrors,grammarErrors,styleAdvice,rewrite,encouragement};
+}
+
+/* ── APP ── */
+let curLevel=null,curImgId=-1,userText="";
+
+function show(n){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById("s-"+n).classList.add("active");
+  window.scrollTo(0,0);
+}
+
+/* Build cards */
+const grid=document.getElementById("levels-grid");
+Object.entries(LEVELS).forEach(([key,cfg])=>{
+  const c=document.createElement("div");
+  c.className="lvl-card";c.dataset.level=key;
+  c.innerHTML=`<div class="bar" style="background:${cfg.color}"></div>
+    <div class="lvl-badge" style="color:${cfg.color}">${key}</div>
+    <div class="lvl-name">${cfg.label}</div>
+    <div class="lvl-desc">${cfg.prompt.slice(0,65)}…</div>`;
+  c.addEventListener("click",()=>{
+    document.querySelectorAll(".lvl-card").forEach(x=>{x.classList.remove("sel");x.style.borderColor="rgba(0,0,0,0.1)";x.style.boxShadow="";});
+    c.classList.add("sel");c.style.borderColor=cfg.color;c.style.boxShadow=`0 6px 24px ${cfg.color}28`;
+    curLevel=key;document.getElementById("start-btn").disabled=false;
+  });
+  grid.appendChild(c);
+});
+
+function goToPractice(){
+  if(!curLevel)return;
+  const cfg=LEVELS[curLevel];
+  ["lvl-tag","lvl-tag2"].forEach(id=>{
+    const el=document.getElementById(id);
+    el.textContent=`${curLevel} · ${cfg.label}`;
+    el.style.color=cfg.color;el.style.borderColor=cfg.color;
+  });
+  document.getElementById("task-prompt").textContent=cfg.prompt;
+  document.getElementById("task-prompt").style.borderColor=cfg.color;
+  document.getElementById("utext").value="";
+  wcUpdate();loadImg();show("practice");
+}
+
+function randId(ex){let id;do{id=IMG_IDS[Math.floor(Math.random()*IMG_IDS.length)];}while(id===ex);return id;}
+
+function loadImg(){
+  curImgId=randId(curImgId);
+  const img=document.getElementById("pimg"),spin=document.querySelector("#img-frame .img-loading");
+  img.style.opacity="0";spin.style.display="flex";
+  img.src=`https://picsum.photos/id/${curImgId}/600/450`;
+}
+function imgOk(){document.getElementById("pimg").style.opacity="1";document.querySelector("#img-frame .img-loading").style.display="none";}
+function imgErr(){curImgId=randId(curImgId);document.getElementById("pimg").src=`https://picsum.photos/id/${curImgId}/600/450`;}
+
+function wcUpdate(){
+  const t=document.getElementById("utext").value;
+  const w=t.trim()?t.trim().split(/\s+/).length:0;
+  const cfg=LEVELS[curLevel];
+  const el=document.getElementById("wcount"),btn=document.getElementById("check-btn");
+  el.textContent=`${w} words ${w>=cfg.min?"✓":"· need "+cfg.min+"+"}`;
+  el.style.color=w>=cfg.min?"#4a7c6f":"#c0512f";
+  btn.disabled=w<3;
+}
+
+function doCheck(){
+  userText=document.getElementById("utext").value.trim();
+  if(!userText||userText.split(/\s+/).length<3)return;
+  show("loading");
+  const msgs=["Analyzing your writing…","Checking spelling…","Checking grammar…","Almost done…"];
+  let i=0;
+  const t=setInterval(()=>{i=(i+1)%msgs.length;document.getElementById("load-msg").textContent=msgs[i];},900);
+  setTimeout(()=>{clearInterval(t);renderResult(analyze(userText,curLevel));show("result");},1400);
+}
+
+function renderResult(fb){
+  const circ=2*Math.PI*36,dash=circ*(fb.score/100);
+  const color=fb.score>=85?"#4a7c6f":fb.score>=65?"#c9a84c":"#c0512f";
+  const arc=document.getElementById("score-arc");
+  arc.setAttribute("stroke-dasharray",`${dash} ${circ}`);
+  arc.setAttribute("stroke",color);
+  const sn=document.getElementById("score-num");sn.textContent=fb.score;sn.style.color=color;
+  document.getElementById("enc-msg").textContent=fb.encouragement;
+  document.getElementById("orig-text").textContent=userText;
+  const box=document.getElementById("corrections");box.innerHTML="";
+
+  box.appendChild(card("✎","#fce4d6","#c0512f","Spelling",fb.spellingErrors,
+    it=>`<span class="err-wrong">${it.wrong}</span> → <span class="err-right">${it.correct}</span><br/><span class="err-note">${it.explanation}</span>`,"#c0512f"));
+  box.appendChild(card("⚙","#d6e8f5","#2a6fa8","Grammar",fb.grammarErrors,
+    it=>`<span class="err-wrong">${it.wrong}</span> → <span class="err-right">${it.correct}</span><br/><span class="err-note">${it.explanation}</span>`,"#2a6fa8"));
+  box.appendChild(card("✦","#d6f0e8","#4a7c6f","Writing Style",fb.styleAdvice,
+    it=>`<strong>${it.issue}</strong><br/><span class="err-note">${it.suggestion}</span>`,"#4a7c6f"));
+
+  const rw=document.createElement("div");rw.className="corr-card";
+  rw.innerHTML=`<div class="corr-head">
+    <div class="corr-icon" style="background:#f5f0d6;color:#8a7a2a">✐</div>
+    <span class="corr-title">Suggested Rewrite</span></div>
+    <div class="corr-body">
+    <p style="font-size:.78rem;color:#8a7f70;margin-bottom:.7rem">Here's an improved version keeping your ideas:</p>
+    <div class="rewrite-box">${fb.rewrite}</div></div>`;
+  box.appendChild(rw);
+}
+
+function card(icon,bg,fg,title,items,render,dot){
+  const d=document.createElement("div");d.className="corr-card";
+  const badge=items.length?`<span class="corr-badge" style="background:${bg};color:${fg}">${items.length} issue${items.length>1?"s":""}</span>`:"";
+  const body=!items.length
+    ?`<p class="no-err">✓ No ${title.toLowerCase()} errors — great job!</p>`
+    :`<ul class="err-list">${items.map(it=>`<li class="err-item"><span class="dot" style="background:${dot}"></span><div>${render(it)}</div></li>`).join("")}</ul>`;
+  d.innerHTML=`<div class="corr-head"><div class="corr-icon" style="background:${bg};color:${fg}">${icon}</div><span class="corr-title">${title}</span>${badge}</div><div class="corr-body">${body}</div>`;
+  return d;
+}
+
+function tryAgain(){document.getElementById("utext").value="";wcUpdate();show("practice");}
+function newTopic(){document.getElementById("utext").value="";wcUpdate();loadImg();show("practice");}
+</script>
 </body>
 </html>
