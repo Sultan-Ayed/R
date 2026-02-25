@@ -1,976 +1,355 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WriteUp — English Writing Practice</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --ink: #0a0a0f;
-    --paper: #f5f0e8;
-    --cream: #ede8db;
-    --gold: #c9a84c;
-    --gold-light: #e8c96a;
-    --sage: #4a7c6f;
-    --rust: #c0512f;
-    --text-muted: #6b6560;
-    --border: rgba(10,10,15,0.12);
-  }
+import { useState, useEffect, useCallback } from "react";
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+const LEVELS = {
+  A1: { name: "Beginner",          color: "#6db87a", prompt: "Write 2–3 simple sentences. What do you see in the image?",                              minWords: 8  },
+  A2: { name: "Elementary",        color: "#5aabcc", prompt: "Write 3–5 sentences. Describe the people, place, or objects you see.",                   minWords: 20 },
+  B1: { name: "Intermediate",      color: "#c9a84c", prompt: "Write a short paragraph (5–8 sentences). What is happening and where?",                  minWords: 45 },
+  B2: { name: "Upper-Intermediate",color: "#d4845a", prompt: "Write 2 paragraphs: describe the scene, then share your thoughts about it.",             minWords: 75 },
+  C1: { name: "Advanced",          color: "#a06fbd", prompt: "Write 2–3 detailed paragraphs. Describe vividly, analyze the mood, and tell the story.", minWords: 110 },
+  C2: { name: "Mastery",           color: "#c0512f", prompt: "Write an expressive piece. Use rich vocabulary, varied structures, and explore deeper meaning.", minWords: 160 },
+};
 
-  body {
-    background: var(--paper);
-    font-family: 'DM Sans', sans-serif;
-    color: var(--ink);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+const IMAGE_IDS = [10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200,210,220,230,240,250,260,270,280,290,300,310,320,330,340,350,360,370,380,390,400,410,420,430,440,450,460,470,480,490,500];
 
-  /* Noise texture overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 9999;
-  }
-
-  /* HEADER */
-  header {
-    padding: 2rem 4rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem;
-    font-weight: 900;
-    letter-spacing: -0.03em;
-  }
-  .logo span { color: var(--gold); }
-
-  .tagline {
-    font-size: 0.8rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    font-weight: 500;
-  }
-
-  /* MAIN */
-  main {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 3rem 2rem 6rem;
-  }
-
-  /* SCREENS */
-  .screen { display: none; animation: fadeIn 0.5s ease; }
-  .screen.active { display: block; }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(18px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* LEVEL SELECT SCREEN */
-  .hero-text {
-    text-align: center;
-    margin-bottom: 3.5rem;
-  }
-  .hero-text h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2.4rem, 5vw, 3.8rem);
-    font-weight: 900;
-    line-height: 1.1;
-    margin-bottom: 1rem;
-  }
-  .hero-text p {
-    font-size: 1.05rem;
-    color: var(--text-muted);
-    max-width: 480px;
-    margin: 0 auto;
-    line-height: 1.7;
-  }
-
-  .levels-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.2rem;
-    margin-bottom: 2rem;
-  }
-
-  .level-card {
-    background: white;
-    border: 1.5px solid var(--border);
-    border-radius: 4px;
-    padding: 1.8rem 1.5rem;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    position: relative;
-    overflow: hidden;
-  }
-  .level-card::before {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--gold);
-    transform: scaleX(0);
-    transition: transform 0.25s ease;
-  }
-  .level-card:hover { border-color: var(--gold); transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
-  .level-card:hover::before { transform: scaleX(1); }
-  .level-card.selected { border-color: var(--gold); background: #fffdf5; box-shadow: 0 4px 20px rgba(201,168,76,0.2); }
-  .level-card.selected::before { transform: scaleX(1); }
-
-  .level-badge {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.2rem;
-    font-weight: 900;
-    color: var(--gold);
-    margin-bottom: 0.5rem;
-  }
-  .level-name {
-    font-size: 0.75rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    font-weight: 500;
-    color: var(--ink);
-    margin-bottom: 0.5rem;
-  }
-  .level-desc {
-    font-size: 0.82rem;
-    color: var(--text-muted);
-    line-height: 1.5;
-  }
-
-  .start-btn {
-    display: block;
-    width: 100%;
-    max-width: 320px;
-    margin: 2.5rem auto 0;
-    padding: 1rem 2rem;
-    background: var(--ink);
-    color: var(--paper);
-    border: none;
-    border-radius: 4px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 1rem;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .start-btn:hover { background: var(--gold); color: var(--ink); }
-  .start-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  /* PRACTICE SCREEN */
-  .practice-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 2rem;
-  }
-  .back-btn {
-    background: none;
-    border: 1.5px solid var(--border);
-    border-radius: 4px;
-    padding: 0.5rem 1rem;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    color: var(--ink);
-  }
-  .back-btn:hover { border-color: var(--ink); }
-
-  .level-indicator {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--gold);
-    background: #fffdf5;
-    border: 1.5px solid var(--gold);
-    padding: 0.3rem 0.9rem;
-    border-radius: 4px;
-  }
-
-  .practice-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin-bottom: 2rem;
-  }
-
-  .image-section {
-    position: relative;
-  }
-
-  .image-frame {
-    width: 100%;
-    aspect-ratio: 4/3;
-    border-radius: 4px;
-    overflow: hidden;
-    border: 1.5px solid var(--border);
-    background: var(--cream);
-    position: relative;
-  }
-  .image-frame img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: opacity 0.4s;
-  }
-  .image-loading {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--cream);
-    font-size: 0.85rem;
-    color: var(--text-muted);
-  }
-
-  .new-image-btn {
-    margin-top: 0.8rem;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    background: none;
-    border: 1.5px solid var(--border);
-    border-radius: 4px;
-    padding: 0.5rem 0.9rem;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.82rem;
-    cursor: pointer;
-    color: var(--text-muted);
-    transition: all 0.2s;
-    width: 100%;
-    justify-content: center;
-  }
-  .new-image-btn:hover { border-color: var(--sage); color: var(--sage); }
-
-  .writing-section label {
-    display: block;
-    font-size: 0.78rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    font-weight: 500;
-    color: var(--text-muted);
-    margin-bottom: 0.6rem;
-  }
-
-  .writing-prompt {
-    font-size: 0.88rem;
-    color: var(--text-muted);
-    margin-bottom: 1rem;
-    line-height: 1.6;
-    padding: 0.8rem;
-    background: var(--cream);
-    border-radius: 4px;
-    border-left: 3px solid var(--gold);
-  }
-
-  textarea {
-    width: 100%;
-    height: 200px;
-    padding: 1rem;
-    border: 1.5px solid var(--border);
-    border-radius: 4px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.95rem;
-    line-height: 1.7;
-    color: var(--ink);
-    background: white;
-    resize: vertical;
-    transition: border-color 0.2s;
-    outline: none;
-  }
-  textarea:focus { border-color: var(--gold); }
-  textarea::placeholder { color: #b0a898; }
-
-  .word-count {
-    text-align: right;
-    font-size: 0.78rem;
-    color: var(--text-muted);
-    margin-top: 0.4rem;
-  }
-
-  .correct-btn {
-    display: block;
-    width: 100%;
-    padding: 1rem;
-    background: var(--sage);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.03em;
-  }
-  .correct-btn:hover { background: #3d6b5f; }
-  .correct-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-  /* CORRECTION SCREEN */
-  .correction-container { max-width: 780px; margin: 0 auto; }
-
-  .correction-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 2rem;
-    flex-wrap: gap;
-  }
-  .correction-header h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem;
-    font-weight: 700;
-  }
-
-  .score-badge {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-family: 'Playfair Display', serif;
-  }
-  .score-number {
-    font-size: 3rem;
-    font-weight: 900;
-    color: var(--gold);
-    line-height: 1;
-  }
-  .score-label { font-size: 0.8rem; color: var(--text-muted); }
-
-  .original-text-box {
-    background: var(--cream);
-    border-radius: 4px;
-    padding: 1.2rem 1.5rem;
-    margin-bottom: 2rem;
-    border-left: 3px solid var(--border);
-  }
-  .original-text-box h3 {
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    font-weight: 500;
-    color: var(--text-muted);
-    margin-bottom: 0.6rem;
-  }
-  .original-text-box p {
-    font-size: 0.92rem;
-    line-height: 1.7;
-    color: var(--ink);
-  }
-
-  .correction-sections { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2rem; }
-
-  .correction-card {
-    background: white;
-    border: 1.5px solid var(--border);
-    border-radius: 4px;
-    overflow: hidden;
-  }
-  .correction-card-header {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    padding: 1rem 1.5rem;
-    background: var(--cream);
-    border-bottom: 1.5px solid var(--border);
-  }
-  .correction-card-icon {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.9rem;
-    font-weight: 700;
-    flex-shrink: 0;
-  }
-  .icon-spelling { background: #fce4d6; color: var(--rust); }
-  .icon-grammar { background: #d6e8f5; color: #2a6fa8; }
-  .icon-style { background: #d6f0e8; color: var(--sage); }
-  .icon-rewrite { background: #f5f0d6; color: #8a7a2a; }
-
-  .correction-card-title { font-weight: 600; font-size: 0.95rem; }
-  .correction-card-body { padding: 1.2rem 1.5rem; }
-
-  .error-list { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
-  .error-item {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 0.8rem;
-    align-items: start;
-    font-size: 0.88rem;
-    line-height: 1.6;
-  }
-  .error-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    margin-top: 0.45rem;
-    flex-shrink: 0;
-  }
-  .dot-spelling { background: var(--rust); }
-  .dot-grammar { background: #2a6fa8; }
-  .dot-style { background: var(--sage); }
-
-  .error-wrong { color: var(--rust); text-decoration: line-through; font-weight: 500; }
-  .error-right { color: var(--sage); font-weight: 600; }
-  .error-note { color: var(--text-muted); }
-
-  .rewrite-text {
-    font-size: 0.95rem;
-    line-height: 1.9;
-    color: var(--ink);
-    background: #fffdf5;
-    border: 1px dashed var(--gold);
-    border-radius: 4px;
-    padding: 1rem 1.2rem;
-  }
-
-  .no-errors {
-    font-size: 0.88rem;
-    color: var(--sage);
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .action-row {
-    display: flex;
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-  .try-again-btn {
-    flex: 1;
-    padding: 0.9rem;
-    background: var(--ink);
-    color: var(--paper);
-    border: none;
-    border-radius: 4px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .try-again-btn:hover { background: var(--gold); color: var(--ink); }
-  .new-topic-btn {
-    flex: 1;
-    padding: 0.9rem;
-    background: white;
-    color: var(--ink);
-    border: 1.5px solid var(--border);
-    border-radius: 4px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .new-topic-btn:hover { border-color: var(--ink); }
-
-  /* Loading state */
-  .loading-overlay {
-    text-align: center;
-    padding: 4rem 2rem;
-    display: none;
-  }
-  .loading-overlay.active { display: block; }
-  .spinner {
-    width: 36px;
-    height: 36px;
-    border: 3px solid var(--border);
-    border-top-color: var(--gold);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin: 0 auto 1rem;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loading-text {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
-    color: var(--text-muted);
-  }
-
-  @media (max-width: 650px) {
-    header { padding: 1.5rem; }
-    main { padding: 2rem 1rem 4rem; }
-    .levels-grid { grid-template-columns: repeat(2, 1fr); }
-    .practice-layout { grid-template-columns: 1fr; }
-  }
-</style>
-</head>
-<body>
-
-<header>
-  <div class="logo">Write<span>Up</span></div>
-  <div class="tagline">English Writing Practice</div>
-</header>
-
-<main>
-  <!-- SCREEN 1: Level Selection -->
-  <div id="screen-level" class="screen active">
-    <div class="hero-text">
-      <h1>Choose Your<br>Writing Level</h1>
-      <p>Select your English proficiency level, then describe a random image to practice your writing skills.</p>
+function Spinner() {
+  return (
+    <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:"1rem", padding:"4rem 0" }}>
+      <div style={{
+        width:40, height:40,
+        border:"3px solid #e8e0d0",
+        borderTopColor:"#c9a84c",
+        borderRadius:"50%",
+        animation:"spin 0.8s linear infinite"
+      }}/>
+      <p style={{ color:"#8a7f70", fontFamily:"Georgia,serif", fontSize:"1rem" }}>Analyzing your writing…</p>
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
     </div>
-
-    <div class="levels-grid">
-      <div class="level-card" data-level="A1" onclick="selectLevel(this)">
-        <div class="level-badge">A1</div>
-        <div class="level-name">Beginner</div>
-        <div class="level-desc">Simple words and basic sentences. Write 2–3 sentences.</div>
-      </div>
-      <div class="level-card" data-level="A2" onclick="selectLevel(this)">
-        <div class="level-badge">A2</div>
-        <div class="level-name">Elementary</div>
-        <div class="level-desc">Short familiar sentences. Write 3–5 sentences.</div>
-      </div>
-      <div class="level-card" data-level="B1" onclick="selectLevel(this)">
-        <div class="level-badge">B1</div>
-        <div class="level-name">Intermediate</div>
-        <div class="level-desc">Connected sentences on familiar topics. Write a short paragraph.</div>
-      </div>
-      <div class="level-card" data-level="B2" onclick="selectLevel(this)">
-        <div class="level-badge">B2</div>
-        <div class="level-name">Upper Intermediate</div>
-        <div class="level-desc">Detailed writing with some complexity. Write 2 paragraphs.</div>
-      </div>
-      <div class="level-card" data-level="C1" onclick="selectLevel(this)">
-        <div class="level-badge">C1</div>
-        <div class="level-name">Advanced</div>
-        <div class="level-desc">Clear, well-structured text. Write 2–3 detailed paragraphs.</div>
-      </div>
-      <div class="level-card" data-level="C2" onclick="selectLevel(this)">
-        <div class="level-badge">C2</div>
-        <div class="level-name">Mastery</div>
-        <div class="level-desc">Fluent, spontaneous, precise writing. Write an expressive essay.</div>
-      </div>
-    </div>
-
-    <button class="start-btn" id="start-btn" onclick="goToPractice()" disabled>
-      Start Writing Practice →
-    </button>
-  </div>
-
-  <!-- SCREEN 2: Practice -->
-  <div id="screen-practice" class="screen">
-    <div class="practice-header">
-      <button class="back-btn" onclick="showScreen('level')">← Back</button>
-      <div class="level-indicator" id="level-indicator">A1</div>
-      <span style="font-size:0.85rem; color:var(--text-muted); margin-left:0.5rem;" id="level-name-small"></span>
-    </div>
-
-    <div class="practice-layout">
-      <div class="image-section">
-        <div class="image-frame">
-          <div class="image-loading" id="img-loading">Loading image…</div>
-          <img id="practice-img" src="" alt="Describe this image" style="opacity:0" onload="imgLoaded()" onerror="imgError()">
-        </div>
-        <button class="new-image-btn" onclick="loadNewImage()">
-          ↻ New Image
-        </button>
-      </div>
-
-      <div class="writing-section">
-        <label>Your Response</label>
-        <div class="writing-prompt" id="level-prompt"></div>
-        <textarea id="user-text" placeholder="Write your description here…" oninput="updateWordCount()"></textarea>
-        <div class="word-count" id="word-count">0 words</div>
-        <button class="correct-btn" style="margin-top:1rem" onclick="goToCorrection()">
-          ✓ Check My Writing
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- SCREEN 3: Loading Correction -->
-  <div id="screen-loading" class="screen">
-    <div class="loading-overlay active">
-      <div class="spinner"></div>
-      <div class="loading-text">Analyzing your writing…</div>
-    </div>
-  </div>
-
-  <!-- SCREEN 4: Correction Results -->
-  <div id="screen-correction" class="screen">
-    <div class="correction-container">
-      <div class="correction-header">
-        <h2>Writing Feedback</h2>
-        <div class="score-badge">
-          <div>
-            <div class="score-number" id="score-display">—</div>
-            <div class="score-label">/ 100</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="original-text-box">
-        <h3>Your Writing</h3>
-        <p id="original-display"></p>
-      </div>
-
-      <div class="correction-sections" id="correction-sections"></div>
-
-      <div class="action-row">
-        <button class="try-again-btn" onclick="tryAgain()">Try Same Image Again</button>
-        <button class="new-topic-btn" onclick="newTopic()">New Image →</button>
-      </div>
-    </div>
-  </div>
-</main>
-
-<script>
-  // ── State
-  let selectedLevel = null;
-  let currentImageUrl = '';
-  let currentImageKeyword = '';
-  let userWriting = '';
-
-  // ── Image topics pool
-  const imageTopics = [
-    { keyword: 'busy city street', category: 'urban' },
-    { keyword: 'mountain landscape', category: 'nature' },
-    { keyword: 'family dinner table', category: 'daily life' },
-    { keyword: 'colorful market', category: 'commerce' },
-    { keyword: 'beach sunset', category: 'nature' },
-    { keyword: 'children playing park', category: 'daily life' },
-    { keyword: 'old library books', category: 'education' },
-    { keyword: 'coffee shop morning', category: 'daily life' },
-    { keyword: 'forest path autumn', category: 'nature' },
-    { keyword: 'kitchen cooking', category: 'home' },
-    { keyword: 'bicycle city', category: 'transport' },
-    { keyword: 'snow mountains winter', category: 'nature' },
-    { keyword: 'street food vendor', category: 'food' },
-    { keyword: 'dog running field', category: 'animals' },
-    { keyword: 'classroom students', category: 'education' },
-    { keyword: 'harbor boats sunset', category: 'travel' },
-    { keyword: 'woman reading garden', category: 'leisure' },
-    { keyword: 'rainy window city', category: 'urban' },
-    { keyword: 'farmers market vegetables', category: 'food' },
-    { keyword: 'sports stadium crowd', category: 'sports' },
-  ];
-
-  // ── Level configs
-  const levelConfig = {
-    A1: { name: 'Beginner', prompt: 'Write 2–3 simple sentences about this image. What do you see?', minWords: 10, maxWords: 40 },
-    A2: { name: 'Elementary', prompt: 'Write 3–5 sentences describing the image. What is happening? Where is it?', minWords: 25, maxWords: 70 },
-    B1: { name: 'Intermediate', prompt: 'Write a short paragraph (5–8 sentences) describing the image and what you think is happening.', minWords: 50, maxWords: 120 },
-    B2: { name: 'Upper Intermediate', prompt: 'Write 2 paragraphs: one describing the scene, and one expressing your thoughts or feelings about it.', minWords: 80, maxWords: 200 },
-    C1: { name: 'Advanced', prompt: 'Write 2–3 detailed paragraphs. Describe the scene vividly, analyze its mood, and reflect on what story might be behind it.', minWords: 120, maxWords: 350 },
-    C2: { name: 'Mastery', prompt: 'Write an expressive, nuanced piece about this image. Use sophisticated vocabulary, varied sentence structures, and explore the deeper meaning or emotion of the scene.', minWords: 180, maxWords: 500 },
-  };
-
-  // ── UI helpers
-  function showScreen(name) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById('screen-' + name).classList.add('active');
-  }
-
-  function selectLevel(card) {
-    document.querySelectorAll('.level-card').forEach(c => c.classList.remove('selected'));
-    card.classList.add('selected');
-    selectedLevel = card.dataset.level;
-    document.getElementById('start-btn').disabled = false;
-  }
-
-  function goToPractice() {
-    if (!selectedLevel) return;
-    const cfg = levelConfig[selectedLevel];
-    document.getElementById('level-indicator').textContent = selectedLevel;
-    document.getElementById('level-name-small').textContent = cfg.name;
-    document.getElementById('level-prompt').textContent = cfg.prompt;
-    document.getElementById('user-text').value = '';
-    updateWordCount();
-    showScreen('practice');
-    loadNewImage();
-  }
-
-  // ── Image loading via Picsum (reliable random images)
-  const imagePool = [
-    'https://picsum.photos/seed/city1/600/450',
-    'https://picsum.photos/seed/nature2/600/450',
-    'https://picsum.photos/seed/people3/600/450',
-    'https://picsum.photos/seed/food4/600/450',
-    'https://picsum.photos/seed/travel5/600/450',
-    'https://picsum.photos/seed/market6/600/450',
-    'https://picsum.photos/seed/park7/600/450',
-    'https://picsum.photos/seed/street8/600/450',
-    'https://picsum.photos/seed/beach9/600/450',
-    'https://picsum.photos/seed/library10/600/450',
-    'https://picsum.photos/seed/coffee11/600/450',
-    'https://picsum.photos/seed/forest12/600/450',
-    'https://picsum.photos/seed/kitchen13/600/450',
-    'https://picsum.photos/seed/bike14/600/450',
-    'https://picsum.photos/seed/snow15/600/450',
-    'https://picsum.photos/seed/dog16/600/450',
-    'https://picsum.photos/seed/class17/600/450',
-    'https://picsum.photos/seed/harbor18/600/450',
-    'https://picsum.photos/seed/garden19/600/450',
-    'https://picsum.photos/seed/rain20/600/450',
-  ];
-
-  let lastImageIndex = -1;
-
-  function loadNewImage() {
-    const img = document.getElementById('practice-img');
-    const loading = document.getElementById('img-loading');
-    img.style.opacity = '0';
-    loading.style.display = 'flex';
-
-    let idx;
-    do { idx = Math.floor(Math.random() * imagePool.length); } while (idx === lastImageIndex);
-    lastImageIndex = idx;
-
-    // Use a random picsum photo
-    const randomId = Math.floor(Math.random() * 900) + 100;
-    currentImageUrl = `https://picsum.photos/id/${randomId}/600/450`;
-    currentImageKeyword = imageTopics[idx % imageTopics.length].keyword;
-
-    img.src = currentImageUrl;
-  }
-
-  function imgLoaded() {
-    document.getElementById('practice-img').style.opacity = '1';
-    document.getElementById('img-loading').style.display = 'none';
-  }
-
-  function imgError() {
-    // fallback to a working picsum URL
-    document.getElementById('practice-img').src = 'https://picsum.photos/600/450?random=' + Date.now();
-  }
-
-  function updateWordCount() {
-    const text = document.getElementById('user-text').value.trim();
-    const words = text ? text.split(/\s+/).length : 0;
-    document.getElementById('word-count').textContent = words + ' word' + (words !== 1 ? 's' : '');
-  }
-
-  // ── Correction via Claude API
-  async function goToCorrection() {
-    const text = document.getElementById('user-text').value.trim();
-    if (!text || text.split(/\s+/).length < 3) {
-      alert('Please write at least a few words before checking!');
-      return;
-    }
-    userWriting = text;
-    showScreen('loading');
-
-    try {
-      const feedback = await getCorrectionFromClaude(text, selectedLevel);
-      displayCorrection(feedback);
-      showScreen('correction');
-    } catch (e) {
-      console.error(e);
-      alert('Something went wrong. Please try again.');
-      showScreen('practice');
-    }
-  }
-
-  async function getCorrectionFromClaude(text, level) {
-    const levelDescriptions = {
-      A1: 'beginner (A1) – very basic English, simple vocabulary',
-      A2: 'elementary (A2) – basic sentences and familiar topics',
-      B1: 'intermediate (B1) – can handle familiar topics with some errors',
-      B2: 'upper-intermediate (B2) – fairly complex writing expected',
-      C1: 'advanced (C1) – sophisticated vocabulary and complex structures expected',
-      C2: 'mastery (C2) – near-native fluency expected',
-    };
-
-    const systemPrompt = `You are an expert English writing teacher. You provide detailed, educational, and encouraging feedback on student writing. Always respond with a valid JSON object only — no markdown, no extra text.`;
-
-    const userPrompt = `A student at level ${levelDescriptions[level]} wrote the following English text to describe an image:
-
-"${text}"
-
-Please analyze their writing and return a JSON object with EXACTLY this structure:
-{
-  "score": <number 0-100>,
-  "spellingErrors": [
-    { "wrong": "...", "correct": "...", "explanation": "..." }
-  ],
-  "grammarErrors": [
-    { "wrong": "...", "correct": "...", "explanation": "..." }
-  ],
-  "styleAdvice": [
-    { "issue": "...", "suggestion": "..." }
-  ],
-  "rewrite": "A corrected and improved version of the full text at their level",
-  "encouragement": "A short encouraging message (1-2 sentences)"
+  );
 }
 
-Rules:
-- If there are no spelling errors, spellingErrors should be an empty array []
-- If there are no grammar errors, grammarErrors should be an empty array []
-- If style is already good, styleAdvice should be an empty array []
-- The rewrite should be natural and appropriate for the student's level
-- Score: 90-100 = excellent, 75-89 = good, 60-74 = fair, below 60 = needs work
-- Be encouraging and educational, not discouraging`;
+function ScoreRing({ score }) {
+  const r = 36, circ = 2 * Math.PI * r;
+  const dash = circ * (score / 100);
+  const color = score >= 85 ? "#4a7c6f" : score >= 65 ? "#c9a84c" : "#c0512f";
+  return (
+    <div style={{ position:"relative", width:90, height:90 }}>
+      <svg width="90" height="90" style={{ transform:"rotate(-90deg)" }}>
+        <circle cx="45" cy="45" r={r} fill="none" stroke="#ede8db" strokeWidth="6"/>
+        <circle cx="45" cy="45" r={r} fill="none" stroke={color} strokeWidth="6"
+          strokeDasharray={`${dash} ${circ}`} strokeLinecap="round"
+          style={{ transition:"stroke-dasharray 1s ease" }}/>
+      </svg>
+      <div style={{ position:"absolute", inset:0, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center" }}>
+        <span style={{ fontFamily:"Georgia,serif", fontSize:"1.6rem", fontWeight:900, color, lineHeight:1 }}>{score}</span>
+        <span style={{ fontSize:"0.65rem", color:"#8a7f70" }}>/ 100</span>
+      </div>
+    </div>
+  );
+}
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: userPrompt }]
-      })
-    });
+export default function WriteUp() {
+  const [screen, setScreen] = useState("level"); // level | practice | loading | correction
+  const [level, setLevel] = useState(null);
+  const [imgId, setImgId] = useState(() => IMAGE_IDS[Math.floor(Math.random() * IMAGE_IDS.length)]);
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [text, setText] = useState("");
+  const [feedback, setFeedback] = useState(null);
+  const [error, setError] = useState(null);
 
-    const data = await response.json();
-    const rawText = data.content.map(b => b.text || '').join('');
-    const clean = rawText.replace(/```json|```/g, '').trim();
-    return JSON.parse(clean);
-  }
+  const randomImg = () => {
+    setImgLoaded(false);
+    const newId = IMAGE_IDS[Math.floor(Math.random() * IMAGE_IDS.length)];
+    setImgId(newId);
+  };
 
-  function displayCorrection(feedback) {
-    document.getElementById('original-display').textContent = userWriting;
-    document.getElementById('score-display').textContent = feedback.score;
+  const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
 
-    const scoreEl = document.getElementById('score-display');
-    if (feedback.score >= 85) scoreEl.style.color = 'var(--sage)';
-    else if (feedback.score >= 65) scoreEl.style.color = 'var(--gold)';
-    else scoreEl.style.color = 'var(--rust)';
+  // ── AI Correction
+  const checkWriting = async () => {
+    if (wordCount < 3) return;
+    setScreen("loading");
+    setError(null);
+    try {
+      const levelDescriptions = {
+        A1: "beginner A1 – very basic vocabulary, simple present tense",
+        A2: "elementary A2 – basic sentences on familiar topics",
+        B1: "intermediate B1 – can handle familiar topics with some errors expected",
+        B2: "upper-intermediate B2 – fairly complex writing expected",
+        C1: "advanced C1 – sophisticated vocabulary and complex structures expected",
+        C2: "mastery C2 – near-native fluency expected",
+      };
 
-    const sections = document.getElementById('correction-sections');
-    sections.innerHTML = '';
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          system: "You are an expert English writing teacher. Always respond with valid JSON only — no markdown, no extra text.",
+          messages: [{
+            role: "user",
+            content: `A student at level ${levelDescriptions[level]} wrote this English text to describe an image:\n\n"${text}"\n\nReturn a JSON object with EXACTLY this structure:\n{\n  "score": <0-100>,\n  "spellingErrors": [{ "wrong": "...", "correct": "...", "explanation": "..." }],\n  "grammarErrors": [{ "wrong": "...", "correct": "...", "explanation": "..." }],\n  "styleAdvice": [{ "issue": "...", "suggestion": "..." }],\n  "rewrite": "Corrected and improved version at their level",\n  "encouragement": "1-2 sentence motivating message"\n}\nRules: use [] for empty arrays. Score: 90-100=excellent, 75-89=good, 60-74=fair, <60=needs work.`
+          }]
+        })
+      });
 
-    // Spelling
-    const spellingCard = buildCorrectionCard(
-      '✎', 'icon-spelling', 'Spelling',
-      feedback.spellingErrors,
-      'spelling',
-      feedback.encouragement
-    );
-    sections.appendChild(spellingCard);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error?.message || "API Error");
+      const raw = data.content.map(b => b.text || "").join("").replace(/```json|```/g, "").trim();
+      setFeedback(JSON.parse(raw));
+      setScreen("correction");
+    } catch (e) {
+      setError(e.message);
+      setScreen("practice");
+    }
+  };
 
-    // Grammar
-    const grammarCard = buildCorrectionCard(
-      '⚙', 'icon-grammar', 'Grammar',
-      feedback.grammarErrors,
-      'grammar',
-      null
-    );
-    sections.appendChild(grammarCard);
+  // ── SCREEN: Level Selection
+  if (screen === "level") return (
+    <div style={{ minHeight:"100vh", background:"#f5f0e8", fontFamily:"'DM Sans',system-ui,sans-serif" }}>
+      <header style={{ padding:"1.5rem 3rem", borderBottom:"1px solid rgba(0,0,0,0.1)", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+        <div style={{ fontFamily:"Georgia,serif", fontSize:"1.8rem", fontWeight:900, letterSpacing:"-0.03em" }}>
+          Write<span style={{ color:"#c9a84c" }}>Up</span>
+        </div>
+        <div style={{ fontSize:"0.72rem", letterSpacing:"0.15em", textTransform:"uppercase", color:"#8a7f70" }}>English Writing Practice</div>
+      </header>
 
-    // Style
-    const styleCard = buildStyleCard(feedback.styleAdvice);
-    sections.appendChild(styleCard);
+      <main style={{ maxWidth:800, margin:"0 auto", padding:"3rem 1.5rem" }}>
+        <div style={{ textAlign:"center", marginBottom:"3rem" }}>
+          <h1 style={{ fontFamily:"Georgia,serif", fontSize:"clamp(2rem,5vw,3.2rem)", fontWeight:900, lineHeight:1.1, marginBottom:"0.8rem" }}>
+            Choose Your<br/>Writing Level
+          </h1>
+          <p style={{ color:"#8a7f70", fontSize:"1rem", lineHeight:1.7 }}>
+            Pick your level, describe a random image, and get instant AI feedback on your English writing.
+          </p>
+        </div>
 
-    // Rewrite
-    const rewriteCard = buildRewriteCard(feedback.rewrite);
-    sections.appendChild(rewriteCard);
-  }
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))", gap:"1rem", marginBottom:"2.5rem" }}>
+          {Object.entries(LEVELS).map(([key, cfg]) => (
+            <div key={key} onClick={() => setLevel(key)}
+              style={{
+                background: level === key ? "#fffdf5" : "white",
+                border: `2px solid ${level === key ? cfg.color : "rgba(0,0,0,0.1)"}`,
+                borderRadius:6, padding:"1.5rem", cursor:"pointer",
+                transition:"all 0.2s",
+                boxShadow: level === key ? `0 4px 20px ${cfg.color}33` : "none",
+                transform: level === key ? "translateY(-2px)" : "none",
+                position:"relative", overflow:"hidden"
+              }}>
+              {level === key && <div style={{ position:"absolute", bottom:0, left:0, right:0, height:3, background:cfg.color }}/>}
+              <div style={{ fontFamily:"Georgia,serif", fontSize:"2rem", fontWeight:900, color:cfg.color, lineHeight:1 }}>{key}</div>
+              <div style={{ fontSize:"0.72rem", letterSpacing:"0.1em", textTransform:"uppercase", fontWeight:600, margin:"0.4rem 0" }}>{cfg.name}</div>
+              <div style={{ fontSize:"0.8rem", color:"#8a7f70", lineHeight:1.5 }}>{cfg.prompt.slice(0, 60)}…</div>
+            </div>
+          ))}
+        </div>
 
-  function buildCorrectionCard(icon, iconClass, title, errors, type, encouragement) {
-    const card = document.createElement('div');
-    card.className = 'correction-card';
-    const dotClass = `dot-${type}`;
+        <div style={{ textAlign:"center" }}>
+          <button onClick={() => { if(level) { randomImg(); setScreen("practice"); } }}
+            disabled={!level}
+            style={{
+              padding:"0.9rem 3rem", background: level ? "#0a0a0f" : "#ccc",
+              color: level ? "#f5f0e8" : "#888", border:"none", borderRadius:4,
+              fontFamily:"inherit", fontSize:"1rem", fontWeight:500,
+              cursor: level ? "pointer" : "not-allowed", letterSpacing:"0.04em",
+              transition:"background 0.2s"
+            }}>
+            Start Writing Practice →
+          </button>
+        </div>
+      </main>
+    </div>
+  );
 
-    let body = '';
-    if (!errors || errors.length === 0) {
-      body = `<div class="no-errors">✓ No ${type} errors found — great job!</div>`;
-    } else {
-      body = '<ul class="error-list">' + errors.map(e => `
-        <li class="error-item">
-          <span class="error-dot ${dotClass}"></span>
-          <div>
-            <span class="error-wrong">${e.wrong || e.issue || ''}</span>
-            ${e.correct ? `→ <span class="error-right">${e.correct}</span>` : ''}
-            <br><span class="error-note">${e.explanation || e.suggestion || ''}</span>
+  // ── SCREEN: Loading
+  if (screen === "loading") return (
+    <div style={{ minHeight:"100vh", background:"#f5f0e8", display:"flex", alignItems:"center", justifyContent:"center" }}>
+      <Spinner/>
+    </div>
+  );
+
+  // ── SCREEN: Practice
+  if (screen === "practice") {
+    const cfg = LEVELS[level];
+    return (
+      <div style={{ minHeight:"100vh", background:"#f5f0e8", fontFamily:"'DM Sans',system-ui,sans-serif" }}>
+        <header style={{ padding:"1.2rem 2rem", borderBottom:"1px solid rgba(0,0,0,0.1)", display:"flex", alignItems:"center", gap:"1rem" }}>
+          <button onClick={() => setScreen("level")}
+            style={{ background:"none", border:"1.5px solid rgba(0,0,0,0.15)", borderRadius:4, padding:"0.4rem 0.9rem", fontFamily:"inherit", fontSize:"0.85rem", cursor:"pointer" }}>
+            ← Back
+          </button>
+          <div style={{ fontFamily:"Georgia,serif", fontSize:"Georgia,serif", fontWeight:700, color:cfg.color, background:"#fffdf5", border:`1.5px solid ${cfg.color}`, borderRadius:4, padding:"0.25rem 0.8rem", fontSize:"1rem" }}>
+            {level} · {cfg.name}
           </div>
-        </li>
-      `).join('') + '</ul>';
-    }
+        </header>
 
-    if (encouragement) {
-      body += `<p style="margin-top:1rem;font-size:0.85rem;color:var(--sage);font-style:italic;">${encouragement}</p>`;
-    }
+        <main style={{ maxWidth:860, margin:"0 auto", padding:"2rem 1.5rem" }}>
+          {error && (
+            <div style={{ background:"#fce4d6", border:"1.5px solid #c0512f", borderRadius:4, padding:"0.8rem 1.2rem", marginBottom:"1rem", color:"#c0512f", fontSize:"0.88rem" }}>
+              ⚠ {error}
+            </div>
+          )}
 
-    card.innerHTML = `
-      <div class="correction-card-header">
-        <div class="correction-card-icon ${iconClass}">${icon}</div>
-        <div class="correction-card-title">${title}</div>
-        ${errors && errors.length > 0 ? `<span style="margin-left:auto;background:#fce4d6;color:var(--rust);font-size:0.75rem;font-weight:600;padding:0.2rem 0.6rem;border-radius:20px;">${errors.length} issue${errors.length>1?'s':''}</span>` : ''}
-      </div>
-      <div class="correction-card-body">${body}</div>
-    `;
-    return card;
-  }
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"2rem" }}>
+            {/* Image */}
+            <div>
+              <div style={{ borderRadius:6, overflow:"hidden", border:"1.5px solid rgba(0,0,0,0.1)", background:"#ede8db", aspectRatio:"4/3", position:"relative" }}>
+                {!imgLoaded && (
+                  <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", color:"#8a7f70", fontSize:"0.85rem" }}>
+                    Loading…
+                  </div>
+                )}
+                <img
+                  src={`https://picsum.photos/id/${imgId}/600/450`}
+                  alt="Describe this"
+                  onLoad={() => setImgLoaded(true)}
+                  onError={() => { setImgId(IMAGE_IDS[Math.floor(Math.random()*IMAGE_IDS.length)]); }}
+                  style={{ width:"100%", height:"100%", objectFit:"cover", opacity: imgLoaded ? 1 : 0, transition:"opacity 0.4s" }}
+                />
+              </div>
+              <button onClick={randomImg}
+                style={{ marginTop:"0.7rem", width:"100%", background:"none", border:"1.5px solid rgba(0,0,0,0.12)", borderRadius:4, padding:"0.5rem", fontFamily:"inherit", fontSize:"0.82rem", color:"#8a7f70", cursor:"pointer" }}>
+                ↻ New Image
+              </button>
+            </div>
 
-  function buildStyleCard(styleAdvice) {
-    const card = document.createElement('div');
-    card.className = 'correction-card';
-    let body = '';
-    if (!styleAdvice || styleAdvice.length === 0) {
-      body = '<div class="no-errors">✓ Your writing style is appropriate for your level!</div>';
-    } else {
-      body = '<ul class="error-list">' + styleAdvice.map(s => `
-        <li class="error-item">
-          <span class="error-dot dot-style"></span>
-          <div>
-            <span style="font-weight:500;">${s.issue}</span><br>
-            <span class="error-note">${s.suggestion}</span>
+            {/* Writing */}
+            <div style={{ display:"flex", flexDirection:"column" }}>
+              <div style={{ fontSize:"0.72rem", letterSpacing:"0.1em", textTransform:"uppercase", fontWeight:500, color:"#8a7f70", marginBottom:"0.5rem" }}>Your Task</div>
+              <div style={{ background:"#ede8db", borderLeft:`3px solid ${cfg.color}`, borderRadius:"0 4px 4px 0", padding:"0.8rem 1rem", marginBottom:"1rem", fontSize:"0.88rem", color:"#4a4540", lineHeight:1.6 }}>
+                {cfg.prompt}
+              </div>
+              <textarea
+                value={text}
+                onChange={e => setText(e.target.value)}
+                placeholder="Write your description here…"
+                style={{
+                  flex:1, minHeight:180, padding:"1rem", border:"1.5px solid rgba(0,0,0,0.12)",
+                  borderRadius:4, fontFamily:"inherit", fontSize:"0.95rem", lineHeight:1.7,
+                  color:"#0a0a0f", background:"white", resize:"vertical", outline:"none"
+                }}
+              />
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:"0.4rem", marginBottom:"1rem" }}>
+                <span style={{ fontSize:"0.78rem", color: wordCount < cfg.minWords ? "#c0512f" : "#4a7c6f" }}>
+                  {wordCount} words {wordCount < cfg.minWords ? `(need ${cfg.minWords}+)` : "✓"}
+                </span>
+              </div>
+              <button onClick={checkWriting} disabled={wordCount < 3}
+                style={{
+                  padding:"0.9rem", background: wordCount >= 3 ? "#4a7c6f" : "#ccc",
+                  color:"white", border:"none", borderRadius:4,
+                  fontFamily:"inherit", fontSize:"0.98rem", fontWeight:500,
+                  cursor: wordCount >= 3 ? "pointer" : "not-allowed", transition:"background 0.2s"
+                }}>
+                ✓ Check My Writing
+              </button>
+            </div>
           </div>
-        </li>
-      `).join('') + '</ul>';
-    }
-    card.innerHTML = `
-      <div class="correction-card-header">
-        <div class="correction-card-icon icon-style">✦</div>
-        <div class="correction-card-title">Writing Style</div>
-        ${styleAdvice && styleAdvice.length > 0 ? `<span style="margin-left:auto;background:#d6f0e8;color:var(--sage);font-size:0.75rem;font-weight:600;padding:0.2rem 0.6rem;border-radius:20px;">${styleAdvice.length} tip${styleAdvice.length>1?'s':''}</span>` : ''}
+        </main>
       </div>
-      <div class="correction-card-body">${body}</div>
-    `;
-    return card;
+    );
   }
 
-  function buildRewriteCard(rewrite) {
-    const card = document.createElement('div');
-    card.className = 'correction-card';
-    card.innerHTML = `
-      <div class="correction-card-header">
-        <div class="correction-card-icon icon-rewrite">✐</div>
-        <div class="correction-card-title">Suggested Rewrite</div>
+  // ── SCREEN: Correction
+  if (screen === "correction" && feedback) {
+    const cfg = LEVELS[level];
+    const Card = ({ icon, iconBg, iconColor, title, count, children }) => (
+      <div style={{ background:"white", border:"1.5px solid rgba(0,0,0,0.1)", borderRadius:6, overflow:"hidden", marginBottom:"1.2rem" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:"0.8rem", padding:"0.9rem 1.3rem", background:"#f5f0e8", borderBottom:"1.5px solid rgba(0,0,0,0.08)" }}>
+          <div style={{ width:28, height:28, borderRadius:"50%", background:iconBg, color:iconColor, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"0.9rem", fontWeight:700 }}>{icon}</div>
+          <div style={{ fontWeight:600, fontSize:"0.95rem" }}>{title}</div>
+          {count > 0 && <span style={{ marginLeft:"auto", background:iconBg, color:iconColor, fontSize:"0.72rem", fontWeight:700, padding:"0.15rem 0.6rem", borderRadius:20 }}>{count} issue{count>1?"s":""}</span>}
+        </div>
+        <div style={{ padding:"1.1rem 1.3rem" }}>{children}</div>
       </div>
-      <div class="correction-card-body">
-        <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:0.8rem;">Here's how your writing could be improved while keeping your ideas:</p>
-        <div class="rewrite-text">${rewrite}</div>
+    );
+
+    const NoErrors = ({ label }) => (
+      <div style={{ color:"#4a7c6f", fontWeight:500, fontSize:"0.88rem" }}>✓ No {label} errors — great job!</div>
+    );
+
+    const ErrorList = ({ items, dotColor, isStyle }) => (
+      <ul style={{ listStyle:"none", display:"flex", flexDirection:"column", gap:"0.8rem" }}>
+        {items.map((item, i) => (
+          <li key={i} style={{ display:"grid", gridTemplateColumns:"10px 1fr", gap:"0.7rem", fontSize:"0.88rem", lineHeight:1.6 }}>
+            <span style={{ width:8, height:8, borderRadius:"50%", background:dotColor, marginTop:"0.45rem", display:"block" }}/>
+            <div>
+              {isStyle ? (
+                <><span style={{ fontWeight:500 }}>{item.issue}</span><br/><span style={{ color:"#8a7f70" }}>{item.suggestion}</span></>
+              ) : (
+                <><span style={{ color:"#c0512f", textDecoration:"line-through", fontWeight:500 }}>{item.wrong}</span>
+                {" → "}<span style={{ color:"#4a7c6f", fontWeight:600 }}>{item.correct}</span>
+                <br/><span style={{ color:"#8a7f70" }}>{item.explanation}</span></>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+    );
+
+    return (
+      <div style={{ minHeight:"100vh", background:"#f5f0e8", fontFamily:"'DM Sans',system-ui,sans-serif" }}>
+        <header style={{ padding:"1.2rem 2rem", borderBottom:"1px solid rgba(0,0,0,0.1)", display:"flex", alignItems:"center", gap:"1rem" }}>
+          <button onClick={() => setScreen("practice")}
+            style={{ background:"none", border:"1.5px solid rgba(0,0,0,0.15)", borderRadius:4, padding:"0.4rem 0.9rem", fontFamily:"inherit", fontSize:"0.85rem", cursor:"pointer" }}>
+            ← Back
+          </button>
+          <div style={{ fontFamily:"Georgia,serif", fontWeight:700, color:cfg.color, background:"#fffdf5", border:`1.5px solid ${cfg.color}`, borderRadius:4, padding:"0.25rem 0.8rem", fontSize:"1rem" }}>
+            {level} · {cfg.name}
+          </div>
+        </header>
+
+        <main style={{ maxWidth:760, margin:"0 auto", padding:"2rem 1.5rem 4rem" }}>
+          {/* Header */}
+          <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:"2rem", flexWrap:"wrap", gap:"1rem" }}>
+            <div>
+              <h2 style={{ fontFamily:"Georgia,serif", fontSize:"2rem", fontWeight:900 }}>Writing Feedback</h2>
+              <p style={{ color:"#8a7f70", fontSize:"0.88rem", marginTop:"0.2rem" }}>{feedback.encouragement}</p>
+            </div>
+            <ScoreRing score={feedback.score}/>
+          </div>
+
+          {/* Original */}
+          <div style={{ background:"#ede8db", borderLeft:"3px solid rgba(0,0,0,0.15)", borderRadius:"0 4px 4px 0", padding:"1rem 1.3rem", marginBottom:"2rem" }}>
+            <div style={{ fontSize:"0.72rem", letterSpacing:"0.1em", textTransform:"uppercase", color:"#8a7f70", fontWeight:500, marginBottom:"0.5rem" }}>Your Writing</div>
+            <p style={{ fontSize:"0.92rem", lineHeight:1.8, color:"#0a0a0f" }}>{text}</p>
+          </div>
+
+          {/* Cards */}
+          <Card icon="✎" iconBg="#fce4d6" iconColor="#c0512f" title="Spelling" count={feedback.spellingErrors?.length || 0}>
+            {!feedback.spellingErrors?.length ? <NoErrors label="spelling"/> : <ErrorList items={feedback.spellingErrors} dotColor="#c0512f"/>}
+          </Card>
+
+          <Card icon="⚙" iconBg="#d6e8f5" iconColor="#2a6fa8" title="Grammar" count={feedback.grammarErrors?.length || 0}>
+            {!feedback.grammarErrors?.length ? <NoErrors label="grammar"/> : <ErrorList items={feedback.grammarErrors} dotColor="#2a6fa8"/>}
+          </Card>
+
+          <Card icon="✦" iconBg="#d6f0e8" iconColor="#4a7c6f" title="Writing Style" count={feedback.styleAdvice?.length || 0}>
+            {!feedback.styleAdvice?.length ? <NoErrors label="style"/> : <ErrorList items={feedback.styleAdvice} dotColor="#4a7c6f" isStyle/>}
+          </Card>
+
+          <Card icon="✐" iconBg="#f5f0d6" iconColor="#8a7a2a" title="Suggested Rewrite">
+            <p style={{ fontSize:"0.78rem", color:"#8a7f70", marginBottom:"0.7rem" }}>Here's an improved version while keeping your ideas:</p>
+            <div style={{ background:"#fffdf5", border:"1px dashed #c9a84c", borderRadius:4, padding:"1rem 1.2rem", fontSize:"0.95rem", lineHeight:1.9, color:"#0a0a0f" }}>
+              {feedback.rewrite}
+            </div>
+          </Card>
+
+          {/* Actions */}
+          <div style={{ display:"flex", gap:"1rem", marginTop:"1.5rem" }}>
+            <button onClick={() => { setText(""); setScreen("practice"); }}
+              style={{ flex:1, padding:"0.9rem", background:"#0a0a0f", color:"#f5f0e8", border:"none", borderRadius:4, fontFamily:"inherit", fontSize:"0.95rem", fontWeight:500, cursor:"pointer" }}>
+              Try Same Image Again
+            </button>
+            <button onClick={() => { setText(""); randomImg(); setScreen("practice"); }}
+              style={{ flex:1, padding:"0.9rem", background:"white", color:"#0a0a0f", border:"1.5px solid rgba(0,0,0,0.15)", borderRadius:4, fontFamily:"inherit", fontSize:"0.95rem", fontWeight:500, cursor:"pointer" }}>
+              New Image →
+            </button>
+          </div>
+        </main>
       </div>
-    `;
-    return card;
+    );
   }
 
-  function tryAgain() {
-    document.getElementById('user-text').value = '';
-    updateWordCount();
-    showScreen('practice');
-  }
-
-  function newTopic() {
-    document.getElementById('user-text').value = '';
-    updateWordCount();
-    loadNewImage();
-    showScreen('practice');
-  }
-</script>
-</body>
-</html>
+  return null;
+}
