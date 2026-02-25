@@ -6,6 +6,8 @@
     <title>WriteUp - English Writing Practice</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/nspell/index.js"></script>
+    <script src="https://unpkg.com/dictionary-en/index.js"></script>
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f7f3eb; color: #1a1a1a; scroll-behavior: smooth; }
         .serif { font-family: 'Playfair Display', serif; }
@@ -14,7 +16,8 @@
         .level-card.selected { border-color: #d4af37; background-color: #fff; transform: scale(1.02); }
         .btn-start { background-color: #ccc; transition: all 0.3s; }
         .btn-start.active { background-color: #1a1a1a; color: white; cursor: pointer; }
-        .correction-highlight { background-color: #fef3c7; border-bottom: 2px solid #d97706; font-weight: 600; }
+        .correction-highlight { background-color: #fee2e2; border-bottom: 2px solid #ef4444; font-weight: 600; padding: 0 2px; }
+        .suggestion-chip { background-color: #f3f4f6; padding: 2px 8px; border-radius: 4px; font-weight: bold; color: #1f2937; }
     </style>
 </head>
 <body class="p-4 md:p-10">
@@ -80,27 +83,32 @@
                 </div>
                 <div class="flex flex-col">
                     <h2 class="text-2xl serif mb-4">Your Description</h2>
-                    <textarea id="user-text" class="w-full h-64 p-5 border-2 border-gray-100 rounded-xl focus:border-yellow-500 outline-none transition-all leading-relaxed text-lg" placeholder="Start typing your English description here..."></textarea>
-                    <button onclick="checkResult()" class="w-full mt-6 bg-yellow-700 text-white py-4 rounded-xl font-bold hover:bg-yellow-800 shadow-md transition-all active:scale-95">Get AI Feedback</button>
-                    <button onclick="location.reload()" class="mt-4 text-gray-400 text-sm hover:text-black transition">← Change Level</button>
+                    <textarea id="user-text" class="w-full h-64 p-5 border-2 border-gray-100 rounded-xl focus:border-yellow-500 outline-none transition-all leading-relaxed text-lg" placeholder="Start typing here (e.g., The picther is butfil)..."></textarea>
+                    <button id="check-btn" onclick="checkResult()" class="w-full mt-6 bg-yellow-700 text-white py-4 rounded-xl font-bold hover:bg-yellow-800 shadow-md transition-all active:scale-95">Analyze My Writing</button>
+                    <button onclick="location.reload()" class="mt-4 text-gray-400 text-sm hover:text-black transition">← Back to Levels</button>
                 </div>
             </div>
 
             <div id="result-area" class="hidden mt-12 border-t pt-10">
                 <h3 class="text-3xl serif mb-6">Writing Analysis</h3>
-                <div id="feedback-content" class="space-y-6">
-                    </div>
+                <div id="feedback-content" class="space-y-6"></div>
             </div>
         </div>
     </section>
 
     <script>
         let selectedLvl = null;
+        let spellChecker = null;
+
+        // تحميل القاموس عند بدء التشغيل
+        window.dictionaryEn((err, dict) => {
+            if (dict) spellChecker = window.nspell(dict);
+        });
+
         const imgs = [
             'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800',
             'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800',
-            'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800',
-            'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800'
+            'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800'
         ];
 
         function selectLevel(lvl) {
@@ -126,62 +134,61 @@
         function checkResult() {
             const text = document.getElementById('user-text').value.trim();
             if(!text) return alert("Please write something first!");
+            if(!spellChecker) return alert("Still loading dictionary... wait 2 seconds.");
 
-            const resultArea = document.getElementById('result-area');
-            const feedbackContent = document.getElementById('feedback-content');
-            
-            // Logic لتصحيح الأخطاء الشائعة (Simulation)
-            const dictionary = {
-                "picther": "picture",
-                "butfil": "beautiful",
-                "wthier": "weather",
-                "skye": "sky",
-                "greeny": "greenery"
-            };
-
-            let correctedText = text;
-            let findCount = 0;
+            const words = text.split(/\s+/);
+            let correctedHtml = "";
             let suggestions = [];
+            let errorCount = 0;
 
-            Object.keys(dictionary).forEach(wrong => {
-                if (text.toLowerCase().includes(wrong)) {
-                    const regex = new RegExp(wrong, 'gi');
-                    correctedText = correctedText.replace(regex, `<span class="correction-highlight">${dictionary[wrong]}</span>`);
-                    suggestions.push(`Spelling: Use "<b>${dictionary[wrong]}</b>" instead of "${wrong}".`);
-                    findCount++;
+            words.forEach(word => {
+                // إزالة علامات الترقيم للفحص
+                const cleanWord = word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
+                
+                if (cleanWord && !spellChecker.correct(cleanWord)) {
+                    errorCount++;
+                    const bestGuess = spellChecker.suggest(cleanWord)[0] || "???";
+                    correctedHtml += `<span class="correction-highlight">${word}</span> `;
+                    suggestions.push(`"${cleanWord}" might be wrong. Did you mean <span class="suggestion-chip">${bestGuess}</span>?`);
+                } else {
+                    correctedHtml += `${word} `;
                 }
             });
 
+            const resultArea = document.getElementById('result-area');
             resultArea.classList.remove('hidden');
-            
-            feedbackContent.innerHTML = `
+
+            const score = Math.max(0, 10 - errorCount);
+            const accuracy = Math.max(0, 100 - (errorCount * 10));
+
+            document.getElementById('feedback-content').innerHTML = `
                 <div class="grid md:grid-cols-3 gap-6 text-center">
                     <div class="bg-green-50 p-6 rounded-xl border border-green-100">
                         <p class="text-xs uppercase text-green-600 font-bold mb-1 tracking-widest">Vocabulary Score</p>
-                        <p class="text-4xl font-bold text-green-800">${findCount > 0 ? '7.5' : '9.0'}/10</p>
+                        <p class="text-4xl font-bold text-green-800">${score}/10</p>
                     </div>
                     <div class="bg-blue-50 p-6 rounded-xl border border-blue-100">
-                        <p class="text-xs uppercase text-blue-600 font-bold mb-1 tracking-widest">Grammar Accuracy</p>
-                        <p class="text-4xl font-bold text-blue-800">${findCount > 2 ? '70%' : '95%'}</p>
+                        <p class="text-xs uppercase text-blue-600 font-bold mb-1 tracking-widest">Accuracy</p>
+                        <p class="text-4xl font-bold text-blue-800">${accuracy}%</p>
                     </div>
                     <div class="bg-yellow-50 p-6 rounded-xl border border-yellow-100">
-                        <p class="text-xs uppercase text-yellow-600 font-bold mb-1 tracking-widest">Level Target</p>
+                        <p class="text-xs uppercase text-yellow-600 font-bold mb-1 tracking-widest">Level</p>
                         <p class="text-4xl font-bold text-yellow-800">${selectedLvl}</p>
                     </div>
                 </div>
 
                 <div class="bg-gray-50 p-8 rounded-2xl border-2 border-dashed border-gray-200">
-                    <h4 class="font-bold mb-3 text-gray-500 uppercase text-xs tracking-widest italic">Improved Version</h4>
-                    <p class="text-xl leading-relaxed text-gray-800 italic font-serif">"${correctedText}"</p>
+                    <h4 class="font-bold mb-3 text-gray-400 uppercase text-xs tracking-widest">Your Text Analysis</h4>
+                    <p class="text-xl leading-relaxed text-gray-800 font-serif">${correctedHtml}</p>
+                    <p class="mt-4 text-sm text-red-500 italic">* Words in red might have spelling errors.</p>
                 </div>
 
                 <div class="bg-white p-6 rounded-xl border">
-                    <h4 class="font-bold mb-4 flex items-center">
-                        <span class="w-2 h-6 bg-yellow-600 mr-3 inline-block"></span>
-                        AI Suggestions for Improvement:
-                    </h4>
+                    <h4 class="font-bold mb-4 flex items-center">AI Spelling Feedback:</h4>
                     <ul class="space-y-3 text-gray-600">
-                        ${suggestions.length > 0 ? suggestions.map(s => `<li class="flex items-start"><span class="mr-2">💡</span> ${s}</li>`).join('') : '<li class="flex items-start"><span class="mr-2">✨</span> Your writing matches the '+selectedLvl+' level perfectly! Try adding more descriptive adjectives.'}
+                        ${suggestions.length > 0 
+                            ? suggestions.map(s => `<li class="flex items-start"><span class="mr-2">❌</span> ${s}</li>`).join('') 
+                            : '<li class="flex items-start"><span class="mr-2">✅</span> No spelling errors found! Great job.'}
                     </ul>
                 </div>
             `;
