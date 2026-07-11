@@ -3,23 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>السبورة | تهجّي وتعلّم الكلمات</title>
+<title>ينمو ويُتقن | تعلّم الكلمات مقطعًا مقطعًا</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Caveat:wght@600;700&family=Tajawal:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500;1,600&family=Almarai:wght@400;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --board:#1f3b2c;
-    --board-dark:#173026;
-    --chalk:#f5f3ed;
-    --chalk-dim:#c9c7bd;
-    --chalk-yellow:#e8c468;
-    --chalk-blue:#8fb8d8;
-    --chalk-pink:#d98a8a;
-    --chalk-green:#9fcf9f;
-    --wood:#6b4226;
-    --wood-dark:#4a2c19;
-    --wood-light:#8a5a35;
+    --bg-1:#eef4ec;
+    --bg-2:#e2ede2;
+    --paper:#fbfaf5;
+    --ink:#213a2f;
+    --ink-dim:#6d8579;
+    --line:#d7e3d3;
+    --sprout:#4f9d6e;
+    --sprout-dark:#357350;
+    --gold:#c99a45;
+    --gold-soft:#e9d3a3;
+    --rose:#cf8b8f;
+    --sky:#6f9aab;
   }
 
   *{box-sizing:border-box;}
@@ -28,90 +29,77 @@
     margin:0;
     min-height:100vh;
     background:
-      radial-gradient(circle at 20% 15%, #2a4a37 0%, transparent 45%),
-      radial-gradient(circle at 80% 85%, #16281f 0%, transparent 50%),
-      var(--wood-dark);
-    font-family:'Tajawal', sans-serif;
-    color:var(--chalk);
+      radial-gradient(circle at 15% 0%, var(--bg-2) 0%, transparent 45%),
+      radial-gradient(circle at 90% 90%, #dfe9df 0%, transparent 55%),
+      var(--bg-1);
+    font-family:'Almarai', sans-serif;
+    color:var(--ink);
     display:flex;
     justify-content:center;
-    padding:32px 16px 64px;
+    padding:40px 16px 64px;
   }
 
-  .frame{
+  .card{
     width:100%;
-    max-width:760px;
-    background:
-      linear-gradient(180deg, var(--wood-light), var(--wood) 12%, var(--wood) 88%, var(--wood-dark));
-    border-radius:14px;
-    padding:18px;
-    box-shadow:0 30px 60px rgba(0,0,0,.5), inset 0 0 0 2px rgba(0,0,0,.25);
+    max-width:720px;
+    background:var(--paper);
+    border-radius:22px;
+    padding:36px 30px 30px;
+    box-shadow:0 20px 50px rgba(33,58,47,.12), 0 2px 8px rgba(33,58,47,.06);
+    border:1px solid var(--line);
   }
 
-  .board{
-    position:relative;
-    background:
-      radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.035), transparent 55%),
-      radial-gradient(ellipse at 75% 80%, rgba(255,255,255,.03), transparent 50%),
-      var(--board);
-    border-radius:6px;
-    padding:34px 28px 26px;
-    box-shadow:inset 0 0 40px rgba(0,0,0,.55), inset 0 0 3px rgba(0,0,0,.6);
-    overflow:hidden;
+  .brand{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    margin-bottom:6px;
   }
 
-  .board::before{
-    /* chalk dust flecks */
-    content:"";
-    position:absolute; inset:0;
-    background-image:
-      radial-gradient(1.5px 1.5px at 12% 30%, rgba(255,255,255,.15) 0, transparent 60%),
-      radial-gradient(1.5px 1.5px at 42% 68%, rgba(255,255,255,.12) 0, transparent 60%),
-      radial-gradient(1.5px 1.5px at 78% 22%, rgba(255,255,255,.1) 0, transparent 60%),
-      radial-gradient(1.5px 1.5px at 88% 74%, rgba(255,255,255,.13) 0, transparent 60%),
-      radial-gradient(1.5px 1.5px at 60% 12%, rgba(255,255,255,.1) 0, transparent 60%);
-    pointer-events:none;
-  }
+  .brand svg{ width:26px; height:26px; }
 
   .eyebrow{
-    font-family:'Space Mono', monospace;
-    font-size:12px;
-    letter-spacing:.18em;
-    color:var(--chalk-yellow);
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:.16em;
+    color:var(--sprout-dark);
     text-align:center;
-    opacity:.85;
+    text-transform:uppercase;
   }
 
   h1{
-    font-family:'Permanent Marker', cursive;
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:600;
     direction:ltr;
-    font-size:clamp(30px,7vw,44px);
+    font-size:clamp(30px,6.5vw,42px);
     text-align:center;
-    margin:6px 0 2px;
-    color:var(--chalk);
-    transform:rotate(-1.2deg);
-    text-shadow:0 0 1px rgba(255,255,255,.15);
+    margin:4px 0 4px;
+    color:var(--ink);
   }
 
   .subtitle{
     text-align:center;
-    color:var(--chalk-dim);
-    font-size:14px;
-    margin-bottom:22px;
+    color:var(--ink-dim);
+    font-size:14.5px;
+    margin-bottom:28px;
+    line-height:1.6;
   }
 
-  .chalk-rule{
+  .divider{
     border:none;
-    height:2px;
-    margin:22px 0;
-    background:repeating-linear-gradient(90deg, rgba(245,243,237,.35) 0 10px, transparent 10px 18px);
+    height:1px;
+    margin:26px 0;
+    background:var(--line);
   }
 
   label.field-label{
     display:block;
-    font-size:14px;
-    color:var(--chalk-dim);
+    font-size:13.5px;
+    color:var(--ink-dim);
     margin-bottom:8px;
+    font-weight:700;
   }
 
   .input-row{
@@ -123,96 +111,131 @@
     flex:1;
     direction:ltr;
     text-align:left;
-    font-family:'Space Mono', monospace;
-    font-size:20px;
-    padding:12px 14px;
-    background:rgba(245,243,237,.06);
-    border:2px dashed rgba(245,243,237,.4);
-    border-radius:8px;
-    color:var(--chalk);
+    font-family:'JetBrains Mono', monospace;
+    font-size:19px;
+    padding:13px 14px;
+    background:var(--bg-1);
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    color:var(--ink);
     outline:none;
+    transition:border-color .15s ease, background .15s ease;
   }
-  input[type=text]::placeholder{ color:rgba(245,243,237,.35); }
-  input[type=text]:focus{ border-color:var(--chalk-yellow); background:rgba(245,243,237,.1); }
+  input[type=text]::placeholder{ color:#9fb3a8; }
+  input[type=text]:focus{ border-color:var(--sprout); background:#fff; }
 
   button{
-    font-family:'Tajawal', sans-serif;
-    font-weight:700;
-    font-size:15px;
-    padding:12px 20px;
-    border-radius:8px;
-    border:2px solid var(--chalk-yellow);
-    background:transparent;
-    color:var(--chalk-yellow);
+    font-family:'Almarai', sans-serif;
+    font-weight:800;
+    font-size:14.5px;
+    padding:13px 22px;
+    border-radius:12px;
+    border:1.5px solid var(--sprout);
+    background:var(--sprout);
+    color:#fff;
     cursor:pointer;
-    transition:transform .12s ease, background .15s ease, color .15s ease;
+    transition:transform .12s ease, background .15s ease, opacity .15s ease;
   }
-  button:hover{ background:var(--chalk-yellow); color:var(--board-dark); }
+  button:hover{ background:var(--sprout-dark); border-color:var(--sprout-dark); }
   button:active{ transform:scale(.96); }
-  button:focus-visible, input:focus-visible{ outline:3px solid var(--chalk-blue); outline-offset:2px; }
-  button.secondary{ border-color:rgba(245,243,237,.4); color:var(--chalk-dim); }
-  button.secondary:hover{ background:rgba(245,243,237,.15); color:var(--chalk); }
+  button:focus-visible, input:focus-visible{ outline:3px solid var(--sky); outline-offset:2px; }
+  button.secondary{ background:transparent; color:var(--sprout-dark); border-color:var(--line); }
+  button.secondary:hover{ background:var(--bg-1); border-color:var(--sprout); }
   button:disabled{ opacity:.35; cursor:not-allowed; }
-  button:disabled:hover{ background:transparent; color:var(--chalk-yellow); }
 
-  .result{ display:none; margin-top:26px; }
+  .result{ display:none; }
   .result.show{ display:block; }
 
   .card-label{
     font-size:12px;
-    color:var(--chalk-dim);
-    letter-spacing:.08em;
-    margin-bottom:8px;
+    color:var(--ink-dim);
+    letter-spacing:.06em;
+    margin-bottom:12px;
+    font-weight:700;
   }
 
+  /* syllable chips: grow lighter -> deeper, like a sprouting stem */
   .syllables{
     direction:ltr;
-    font-family:'Permanent Marker', cursive;
-    font-size:clamp(26px,6vw,38px);
-    color:var(--chalk);
-    letter-spacing:.5px;
-    line-height:1.5;
-    word-break:break-word;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    align-items:flex-end;
   }
-  .syllables .dash{ color:var(--chalk-yellow); padding:0 6px; }
-  .syllables .syl{ display:inline-block; }
-  .syllables .syl:nth-child(4n+2){ color:var(--chalk-blue); }
-  .syllables .syl:nth-child(4n+3){ color:var(--chalk-yellow); }
-  .syllables .syl:nth-child(4n+4){ color:var(--chalk-pink); }
+  .syllables .syl{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-style:italic;
+    border-radius:10px;
+    padding:8px 14px;
+    color:#fff;
+    font-size:20px;
+    line-height:1;
+  }
+  .syllables .syl:nth-child(6n+1){ background:#a9cdb2; }
+  .syllables .syl:nth-child(6n+2){ background:#8ec19c; }
+  .syllables .syl:nth-child(6n+3){ background:#6fac83; }
+  .syllables .syl:nth-child(6n+4){ background:#5a9d72; }
+  .syllables .syl:nth-child(6n+5){ background:var(--sprout); }
+  .syllables .syl:nth-child(6n+6){ background:var(--sprout-dark); }
+
+  .translation{
+    font-family:'Almarai', sans-serif;
+    font-weight:700;
+    font-size:clamp(20px,4.8vw,25px);
+    color:var(--ink);
+  }
+  .translation.loading{
+    color:var(--ink-dim);
+    font-weight:400;
+    font-size:14.5px;
+  }
+  .translation.error{
+    color:var(--rose);
+    font-weight:400;
+    font-size:13.5px;
+  }
 
   .pronounce{
-    margin-top:16px;
-    font-family:'Caveat', cursive;
-    font-size:clamp(24px,5.5vw,32px);
-    color:var(--chalk-blue);
+    margin-top:18px;
+    font-family:'Almarai', sans-serif;
+    font-size:clamp(19px,4.5vw,23px);
+    font-weight:700;
+    color:var(--sky);
   }
 
   .note{
     font-size:12px;
-    color:var(--chalk-dim);
+    color:var(--ink-dim);
     margin-top:6px;
-    opacity:.75;
+    opacity:.85;
   }
 
-  .quiz-box{ margin-top:8px; }
+  /* growth stem progress for the quiz */
+  .stem-wrap{
+    display:flex;
+    justify-content:center;
+    margin:6px 0 22px;
+  }
 
   .quiz-word{
     direction:ltr;
-    font-family:'Space Mono', monospace;
-    font-size:clamp(24px,6vw,34px);
+    font-family:'JetBrains Mono', monospace;
+    font-weight:600;
+    font-size:clamp(24px,6vw,32px);
     letter-spacing:6px;
     text-align:center;
-    margin:18px 0 20px;
-    color:var(--chalk);
+    margin:6px 0 20px;
+    color:var(--ink);
   }
   .quiz-word .blank{
-    color:var(--chalk-yellow);
-    border-bottom:3px solid var(--chalk-yellow);
+    color:var(--gold);
+    border-bottom:3px solid var(--gold);
     padding:0 2px;
   }
-  .quiz-word .revealed{ color:var(--chalk-dim); }
-  .quiz-word .correct{ color:var(--chalk-green); }
-  .quiz-word .wrong{ color:var(--chalk-pink); }
+  .quiz-word .revealed{ color:#b7c5bd; }
+  .quiz-word .correct{ color:var(--sprout-dark); }
+  .quiz-word .wrong{ color:var(--rose); }
 
   .guess-row{
     display:flex;
@@ -220,126 +243,193 @@
     justify-content:center;
   }
   .guess-row input[type=text]{
-    max-width:70px;
+    max-width:64px;
     text-align:center;
-    font-size:24px;
+    font-size:22px;
     text-transform:lowercase;
   }
-
-  .tally{
-    display:flex;
-    gap:10px;
-    justify-content:center;
-    margin:18px 0 6px;
-    direction:ltr;
-  }
-  .tally .mark{
-    width:14px; height:34px;
-    border-radius:2px;
-    background:rgba(245,243,237,.15);
-    border:1px solid rgba(245,243,237,.3);
-    transform:rotate(-4deg);
-  }
-  .tally .mark.used-correct{ background:var(--chalk-green); border-color:var(--chalk-green); }
-  .tally .mark.used-wrong{ background:var(--chalk-pink); border-color:var(--chalk-pink); }
 
   .feedback{
     text-align:center;
     min-height:22px;
-    font-size:15px;
-    margin-top:10px;
-    font-weight:700;
+    font-size:14.5px;
+    margin-top:12px;
+    font-weight:800;
   }
-  .feedback.correct{ color:var(--chalk-green); }
-  .feedback.wrong{ color:var(--chalk-pink); }
+  .feedback.correct{ color:var(--sprout-dark); }
+  .feedback.wrong{ color:var(--rose); }
 
-  .score-line{
-    text-align:center;
-    font-family:'Caveat', cursive;
-    font-size:26px;
-    color:var(--chalk-yellow);
-    margin-top:14px;
+  .growth-result{
+    display:none;
+    align-items:center;
+    justify-content:center;
+    gap:18px;
+    margin-top:16px;
+  }
+  .growth-result.show{ display:flex; }
+  .growth-result .ring-label{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:600;
+    font-size:20px;
+    color:var(--ink);
+    text-align:right;
+  }
+  .growth-result .ring-sub{
+    font-size:13px;
+    color:var(--ink-dim);
+    margin-top:2px;
   }
 
   .btn-row{
     display:flex;
     gap:10px;
     justify-content:center;
-    margin-top:18px;
+    margin-top:20px;
     flex-wrap:wrap;
   }
 
-  .tray{
-    height:14px;
-    margin-top:16px;
-    border-radius:0 0 10px 10px;
-    background:linear-gradient(180deg, var(--wood), var(--wood-dark));
-    box-shadow:inset 0 3px 6px rgba(0,0,0,.4);
-    position:relative;
-  }
-  .chalk-stub{
-    position:absolute;
-    bottom:6px; right:24%;
-    width:38px; height:9px;
-    background:var(--chalk-yellow);
-    border-radius:3px;
-    box-shadow:14px 2px 0 -1px var(--chalk-blue), -16px -1px 0 -1px var(--chalk-pink);
-    opacity:.9;
+  .footer-divider{ margin-top:30px; }
+
+  .footer{
+    text-align:center;
+    padding-top:2px;
   }
 
-  @media (max-width:480px){
-    .board{ padding:24px 16px 20px; }
-    .syllables{ font-size:26px; }
+  .footer-name{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:16px;
+    color:var(--ink);
+  }
+
+  .footer-tagline{
+    font-size:12.5px;
+    color:var(--ink-dim);
+    margin-top:3px;
+  }
+
+  .footer-links{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-top:14px;
+  }
+
+  .footer-links a{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    background:var(--bg-1);
+    color:var(--ink-dim);
+    border:1px solid var(--line);
+    transition:background .15s ease, color .15s ease, transform .15s ease;
+  }
+
+  .footer-links a:hover{
+    background:var(--sprout);
+    color:#fff;
+    border-color:var(--sprout);
+    transform:translateY(-2px);
+  }
+
+  .footer-links a:focus-visible{
+    outline:3px solid var(--sky);
+    outline-offset:2px;
   }
 </style>
 </head>
 <body>
 
-<div class="frame">
-  <div class="board">
-    <div class="eyebrow">VOCAB BOARD</div>
-    <h1>Spell &amp; Say</h1>
-    <p class="subtitle">اكتب كلمة إنجليزية، وخلها السبورة تفكّها لك مقاطع، وتنطقها بالعربي، وتختبرك فيها</p>
+<div class="card">
+  <div class="brand">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M12 21V10" stroke="#357350" stroke-width="2" stroke-linecap="round"/><path d="M12 13c0-4 3-6 7-6 0 4-3 7-7 7" fill="#4f9d6e"/><path d="M12 16c0-3.2-2.4-5-5.6-5C6.4 14 8.8 16.4 12 16.4" fill="#8ec19c"/></svg>
+    <div class="eyebrow">Grow &amp; Say</div>
+  </div>
+  <h1>Spell, Sound, Grow</h1>
+  <p class="subtitle">اكتب كلمة إنجليزية، وشوفها تتقسّم مقاطع، واعرف طريقة نطقها بالعربي، وبعدين اختبر نفسك واطلع بمستوى أعلى</p>
 
-    <label class="field-label" for="wordInput">الكلمة</label>
-    <div class="input-row">
-      <input type="text" id="wordInput" placeholder="مثال: computer" autocomplete="off">
-      <button id="goBtn">قسّمها</button>
-    </div>
+  <label class="field-label" for="wordInput">الكلمة</label>
+  <div class="input-row">
+    <input type="text" id="wordInput" placeholder="مثال: computer" autocomplete="off">
+    <button id="goBtn">قسّمها</button>
+  </div>
 
-    <div class="result" id="result">
+  <div class="result" id="result">
 
-      <hr class="chalk-rule">
+    <div class="card-label">المعنى بالعربي</div>
+    <div class="translation" id="translationOut">…</div>
 
-      <div class="card-label">المقاطع (Syllables)</div>
-      <div class="syllables" id="syllablesOut"></div>
+    <hr class="divider">
 
-      <div class="pronounce" id="pronounceOut"></div>
-      <div class="note">النطق تقريبي لمساعدتك على الحفظ، مو نطق علمي دقيق</div>
+    <div class="card-label">المقاطع (Syllables)</div>
+    <div class="syllables" id="syllablesOut"></div>
 
-      <hr class="chalk-rule">
+    <div class="pronounce" id="pronounceOut"></div>
+    <div class="note">النطق تقريبي لمساعدتك على الحفظ، مو نطق علمي دقيق</div>
 
-      <div class="card-label">اختبار الحروف — 6 محاولات</div>
+    <hr class="divider">
 
-      <div class="quiz-box" id="quizBox">
-        <div class="tally" id="tally"></div>
-        <div class="quiz-word" id="quizWord"></div>
-        <div class="guess-row" id="guessRow">
-          <input type="text" id="letterInput" maxlength="1" autocomplete="off">
-          <button id="checkBtn">تحقق</button>
-        </div>
-        <div class="feedback" id="feedback"></div>
-        <div class="score-line" id="scoreLine" style="display:none;"></div>
-        <div class="btn-row">
-          <button id="startQuizBtn">ابدأ الاختبار</button>
-          <button id="restartQuizBtn" class="secondary" style="display:none;">أعد الاختبار</button>
+    <div class="card-label">اختبار الحروف — 6 محاولات</div>
+
+    <div class="quiz-box" id="quizBox">
+      <div class="stem-wrap">
+        <svg id="stemSvg" width="220" height="46" viewBox="0 0 220 46"></svg>
+      </div>
+      <div class="quiz-word" id="quizWord"></div>
+      <div class="guess-row" id="guessRow">
+        <input type="text" id="letterInput" maxlength="1" autocomplete="off">
+        <button id="checkBtn">تحقق</button>
+      </div>
+      <div class="feedback" id="feedback"></div>
+
+      <div class="growth-result" id="growthResult">
+        <svg id="ringSvg" width="86" height="86" viewBox="0 0 86 86"></svg>
+        <div>
+          <div class="ring-label" id="ringLabel"></div>
+          <div class="ring-sub" id="ringSub"></div>
         </div>
       </div>
 
+      <div class="btn-row">
+        <button id="startQuizBtn">ابدأ الاختبار</button>
+        <button id="restartQuizBtn" class="secondary" style="display:none;">أعد الاختبار</button>
+      </div>
     </div>
 
-    <div class="tray"><div class="chalk-stub"></div></div>
   </div>
+
+  <hr class="divider footer-divider">
+
+  <div class="footer">
+    <div class="footer-name">
+      سلطان بن عايد
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none"><path d="M12 2l2.4 1.3 2.7-.3 1.1 2.5 2.5 1.1-.3 2.7L22 12l-1.6 2.4.3 2.7-2.5 1.1-1.1 2.5-2.7-.3L12 22l-2.4-1.6-2.7.3-1.1-2.5-2.5-1.1.3-2.7L2 12l1.6-2.4-.3-2.7 2.5-1.1L7 3.3l2.7.3L12 2z" fill="#4f9d6e"/><path d="M8.5 12.5l2.3 2.3 4.7-5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="footer-tagline">باحث ومتخصص في الأمن السيبراني</div>
+
+    <div class="footer-links">
+      <a href="https://www.linkedin.com/in/sultanayed" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3V9zm7 0h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1V21h-4v-5.6c0-1.34-.02-3.07-1.87-3.07-1.87 0-2.16 1.46-2.16 2.97V21h-4V9z"/></svg>
+      </a>
+      <a href="https://t.me/SULTAN_AYED" target="_blank" rel="noopener" aria-label="Telegram" title="Telegram">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M21.5 3.5L2.7 10.9c-1.2.5-1.2 1.2-.2 1.5l4.8 1.5 1.9 5.8c.2.6.4.8.9.8.4 0 .6-.2.9-.5l2.1-2 4.4 3.2c.8.4 1.3.2 1.5-.7l2.8-13.2c.3-1.1-.4-1.6-1.3-1.3zM8.6 14.2l9-5.6c.4-.3.8-.1.5.2l-7.4 6.7-.3 3.2-1.4-4.5z"/></svg>
+      </a>
+      <a href="https://x.com/SU2TAN" target="_blank" rel="noopener" aria-label="X" title="X">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M13.9 10.6L21 3h-2.1l-6.2 6.6L7.8 3H3l7.4 10.2L3 21h2.1l6.6-7 5.3 7H21l-7.1-10.4zm-2.3 2.5l-.8-1L6 4.6h2.1l5 6.6.8 1 6.4 8.8h-2.1l-5.6-7.9z"/></svg>
+      </a>
+      <a href="https://snapchat.com/t/J5PgNwEq" target="_blank" rel="noopener" aria-label="Snapchat" title="Snapchat">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M12 2.2c2.6 0 4.3 2 4.4 4.3.05.9 0 1.8-.05 2.4.3.15 1 .3 1.4-.25.2-.3.6-.3.75-.05.2.3-.05.6-.5.9-.35.25-.9.5-1.1.9-.15.3 0 .7.5 1.2.7.75 1.9 1.15 2.8 1.35.25.05.25.4.05.5-.3.2-1 .5-1.9.65-.15.55-.3.75-.7.75-.3 0-.7-.1-1.2-.1-.85 0-1.4.85-3.4.85s-2.55-.85-3.4-.85c-.5 0-.9.1-1.2.1-.4 0-.55-.2-.7-.75-.9-.15-1.6-.45-1.9-.65-.2-.1-.2-.45.05-.5.9-.2 2.1-.6 2.8-1.35.5-.5.65-.9.5-1.2-.2-.4-.75-.65-1.1-.9-.45-.3-.7-.6-.5-.9.15-.25.55-.25.75.05.4.55 1.1.4 1.4.25-.05-.6-.1-1.5-.05-2.4.1-2.3 1.8-4.3 4.4-4.3z"/></svg>
+      </a>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -349,7 +439,6 @@ function splitSyllables(word){
   const re = /[^aeiouy]*[aeiouy]+(?:[^aeiouy]*$|[^aeiouy](?=[^aeiouy]))?/gi;
   const parts = w.match(re);
   if(!parts || parts.length === 0) return [w];
-  // re-case to match original word's letters positionally
   let out = [];
   let i = 0;
   for(const p of parts){
@@ -383,7 +472,6 @@ function arabicForSyllable(syl){
   let i = 0;
   while(i < s.length){
     let matched = false;
-    // soft c/g before e,i,y
     if(s[i] === "c" && /[eiy]/.test(s[i+1] || "")){
       out += "س"; i++; matched = true;
     } else if(s[i] === "g" && /[eiy]/.test(s[i+1] || "")){
@@ -419,8 +507,37 @@ const goBtn = document.getElementById("goBtn");
 const result = document.getElementById("result");
 const syllablesOut = document.getElementById("syllablesOut");
 const pronounceOut = document.getElementById("pronounceOut");
+const translationOut = document.getElementById("translationOut");
 
 let currentWord = "";
+let translationRequestId = 0;
+
+async function fetchTranslation(word){
+  const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=en|ar`);
+  if(!res.ok) throw new Error("network");
+  const data = await res.json();
+  const text = data && data.responseData && data.responseData.translatedText;
+  if(!text || /^[a-zA-Z\s.,]+$/.test(text)) throw new Error("no-translation");
+  return text;
+}
+
+function loadTranslation(word){
+  const requestId = ++translationRequestId;
+  translationOut.textContent = "جاري جلب الترجمة…";
+  translationOut.className = "translation loading";
+
+  fetchTranslation(word)
+    .then(text => {
+      if(requestId !== translationRequestId) return;
+      translationOut.textContent = text;
+      translationOut.className = "translation";
+    })
+    .catch(() => {
+      if(requestId !== translationRequestId) return;
+      translationOut.textContent = "تعذّر جلب الترجمة الآن، تحقق من الاتصال بالإنترنت";
+      translationOut.className = "translation error";
+    });
+}
 
 function renderWord(){
   const raw = wordInput.value.trim();
@@ -429,11 +546,10 @@ function renderWord(){
   if(!currentWord) return;
 
   const syls = splitSyllables(currentWord);
-  syllablesOut.innerHTML = syls
-    .map(s => `<span class="syl">${s}</span>`)
-    .join('<span class="dash">·</span>');
+  syllablesOut.innerHTML = syls.map(s => `<span class="syl">${s}</span>`).join("");
 
   pronounceOut.textContent = "طريقة النطق: " + arabicPronunciation(currentWord);
+  loadTranslation(currentWord);
 
   result.classList.add("show");
   resetQuiz();
@@ -442,13 +558,16 @@ function renderWord(){
 goBtn.addEventListener("click", renderWord);
 wordInput.addEventListener("keydown", e => { if(e.key === "Enter") renderWord(); });
 
-/* ---------- Quiz: 6 rounds, one hidden letter each ---------- */
+/* ---------- Quiz: 6 rounds, one hidden letter each, growth stem + ring ---------- */
 const quizWord = document.getElementById("quizWord");
-const tally = document.getElementById("tally");
+const stemSvg = document.getElementById("stemSvg");
 const letterInput = document.getElementById("letterInput");
 const checkBtn = document.getElementById("checkBtn");
 const feedback = document.getElementById("feedback");
-const scoreLine = document.getElementById("scoreLine");
+const growthResult = document.getElementById("growthResult");
+const ringSvg = document.getElementById("ringSvg");
+const ringLabel = document.getElementById("ringLabel");
+const ringSub = document.getElementById("ringSub");
 const startQuizBtn = document.getElementById("startQuizBtn");
 const restartQuizBtn = document.getElementById("restartQuizBtn");
 const guessRow = document.getElementById("guessRow");
@@ -458,8 +577,48 @@ let round = 0;
 let score = 0;
 let usedIndices = [];
 let currentHiddenIndex = -1;
-let roundResults = []; // 'pending' | 'correct' | 'wrong'
+let roundResults = [];
 let quizActive = false;
+
+const SPROUT = "#4f9d6e";
+const ROSE = "#cf8b8f";
+const NEUTRAL = "#d7e3d3";
+const GOLD = "#c99a45";
+
+function buildStem(){
+  const ns = "http://www.w3.org/2000/svg";
+  stemSvg.innerHTML = "";
+  const stem = document.createElementNS(ns, "path");
+  stem.setAttribute("d", "M110 44 L110 8");
+  stem.setAttribute("stroke", NEUTRAL);
+  stem.setAttribute("stroke-width", "3");
+  stem.setAttribute("stroke-linecap", "round");
+  stemSvg.appendChild(stem);
+
+  for(let i=0; i<TOTAL_ROUNDS; i++){
+    const leaf = document.createElementNS(ns, "ellipse");
+    const y = 40 - i*6;
+    const side = i % 2 === 0 ? 1 : -1;
+    leaf.setAttribute("cx", 110 + side*11);
+    leaf.setAttribute("cy", y);
+    leaf.setAttribute("rx", "9");
+    leaf.setAttribute("ry", "5.5");
+    leaf.setAttribute("transform", `rotate(${side*35} ${110+side*11} ${y})`);
+    leaf.setAttribute("fill", NEUTRAL);
+    leaf.setAttribute("id", "leaf-" + i);
+    stemSvg.appendChild(leaf);
+  }
+}
+
+function updateStem(){
+  for(let i=0; i<TOTAL_ROUNDS; i++){
+    const leaf = document.getElementById("leaf-" + i);
+    if(!leaf) continue;
+    if(roundResults[i] === "correct") leaf.setAttribute("fill", SPROUT);
+    else if(roundResults[i] === "wrong") leaf.setAttribute("fill", ROSE);
+    else leaf.setAttribute("fill", NEUTRAL);
+  }
+}
 
 function resetQuiz(){
   round = 0;
@@ -471,30 +630,11 @@ function resetQuiz(){
   quizWord.textContent = "";
   feedback.textContent = "";
   feedback.className = "feedback";
-  scoreLine.style.display = "none";
-  scoreLine.textContent = "";
+  growthResult.classList.remove("show");
   guessRow.style.display = "none";
   startQuizBtn.style.display = "inline-block";
   restartQuizBtn.style.display = "none";
-  buildTally();
-}
-
-function buildTally(){
-  tally.innerHTML = "";
-  for(let i=0; i<TOTAL_ROUNDS; i++){
-    const d = document.createElement("div");
-    d.className = "mark";
-    tally.appendChild(d);
-  }
-}
-
-function updateTally(){
-  const marks = tally.querySelectorAll(".mark");
-  marks.forEach((m, idx) => {
-    m.className = "mark";
-    if(roundResults[idx] === "correct") m.classList.add("used-correct");
-    else if(roundResults[idx] === "wrong") m.classList.add("used-wrong");
-  });
+  buildStem();
 }
 
 function pickHiddenIndex(){
@@ -536,11 +676,54 @@ function startRound(){
   letterInput.focus();
 }
 
+function drawRing(pct){
+  const ns = "http://www.w3.org/2000/svg";
+  ringSvg.innerHTML = "";
+  const r = 36, cx = 43, cy = 43;
+  const circumference = 2 * Math.PI * r;
+
+  const bg = document.createElementNS(ns, "circle");
+  bg.setAttribute("cx", cx); bg.setAttribute("cy", cy); bg.setAttribute("r", r);
+  bg.setAttribute("fill", "none"); bg.setAttribute("stroke", NEUTRAL); bg.setAttribute("stroke-width", "8");
+  ringSvg.appendChild(bg);
+
+  const fg = document.createElementNS(ns, "circle");
+  fg.setAttribute("cx", cx); fg.setAttribute("cy", cy); fg.setAttribute("r", r);
+  fg.setAttribute("fill", "none");
+  fg.setAttribute("stroke", pct >= 0.5 ? SPROUT : GOLD);
+  fg.setAttribute("stroke-width", "8");
+  fg.setAttribute("stroke-linecap", "round");
+  fg.setAttribute("stroke-dasharray", circumference);
+  fg.setAttribute("stroke-dashoffset", circumference * (1 - pct));
+  fg.setAttribute("transform", `rotate(-90 ${cx} ${cy})`);
+  ringSvg.appendChild(fg);
+
+  const txt = document.createElementNS(ns, "text");
+  txt.setAttribute("x", cx); txt.setAttribute("y", cy + 5);
+  txt.setAttribute("text-anchor", "middle");
+  txt.setAttribute("font-family", "JetBrains Mono, monospace");
+  txt.setAttribute("font-weight", "700");
+  txt.setAttribute("font-size", "18");
+  txt.setAttribute("fill", "#213a2f");
+  txt.textContent = score + "/" + TOTAL_ROUNDS;
+  ringSvg.appendChild(txt);
+}
+
 function finishQuiz(){
   quizActive = false;
   guessRow.style.display = "none";
-  scoreLine.style.display = "block";
-  scoreLine.textContent = `نتيجتك: ${score} من ${TOTAL_ROUNDS} 🎯`;
+  const pct = score / TOTAL_ROUNDS;
+  drawRing(pct);
+  growthResult.classList.add("show");
+
+  let label, sub;
+  if(pct === 1){ label = "إتقان كامل 🌿"; sub = "الكلمة صارت راسخة في ذاكرتك"; }
+  else if(pct >= 0.66){ label = "تقدّم ممتاز"; sub = "قربت توصل للإتقان"; }
+  else if(pct >= 0.33){ label = "في نمو"; sub = "راجع الكلمة وجرب مرة ثانية"; }
+  else { label = "بداية الطريق"; sub = "كل محاولة تقربك للإتقان"; }
+  ringLabel.textContent = label;
+  ringSub.textContent = sub;
+
   startQuizBtn.style.display = "none";
   restartQuizBtn.style.display = "inline-block";
 }
@@ -554,7 +737,7 @@ function checkGuess(){
 
   if(isCorrect){
     score++;
-    feedback.textContent = "صح! 👏";
+    feedback.textContent = "صح! 🌱";
     feedback.className = "feedback correct";
     roundResults[round] = "correct";
   } else {
@@ -563,7 +746,7 @@ function checkGuess(){
     roundResults[round] = "wrong";
   }
   renderQuizWord(true);
-  updateTally();
+  updateStem();
 
   round++;
   guessRow.style.display = "none";
@@ -581,9 +764,9 @@ startQuizBtn.addEventListener("click", () => {
   if(!currentWord) return;
   quizActive = true;
   round = 0; score = 0; usedIndices = []; roundResults = [];
-  buildTally();
+  buildStem();
   startQuizBtn.style.display = "none";
-  scoreLine.style.display = "none";
+  growthResult.classList.remove("show");
   startRound();
 });
 
@@ -596,6 +779,8 @@ restartQuizBtn.addEventListener("click", () => {
 
 checkBtn.addEventListener("click", checkGuess);
 letterInput.addEventListener("keydown", e => { if(e.key === "Enter") checkGuess(); });
+
+buildStem();
 </script>
 
 </body>
