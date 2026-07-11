@@ -196,6 +196,45 @@
     font-size:13.5px;
   }
 
+  .example-label{ margin-top:18px; }
+
+  .example{
+    direction:ltr;
+    text-align:left;
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:500;
+    font-size:clamp(16.5px,4vw,19px);
+    color:var(--ink);
+    line-height:1.6;
+    background:var(--bg-1);
+    border-inline-start:3px solid var(--sprout);
+    border-radius:8px;
+    padding:12px 14px;
+  }
+  .example.loading{
+    font-style:normal;
+    font-family:'Almarai', sans-serif;
+    direction:rtl;
+    text-align:right;
+    color:var(--ink-dim);
+    font-size:14.5px;
+    background:transparent;
+    border-inline-start:none;
+    padding:0;
+  }
+  .example.error{
+    font-style:normal;
+    font-family:'Almarai', sans-serif;
+    direction:rtl;
+    text-align:right;
+    color:var(--rose);
+    font-size:13.5px;
+    background:transparent;
+    border-inline-start:none;
+    padding:0;
+  }
+
   .pronounce{
     margin-top:18px;
     font-family:'Almarai', sans-serif;
@@ -366,6 +405,9 @@
     <div class="card-label">المعنى بالعربي</div>
     <div class="translation" id="translationOut">…</div>
 
+    <div class="card-label example-label">مثال: أكثر استخدام شائع للكلمة</div>
+    <div class="example" id="exampleOut">…</div>
+
     <hr class="divider">
 
     <div class="card-label">المقاطع (Syllables)</div>
@@ -508,9 +550,11 @@ const result = document.getElementById("result");
 const syllablesOut = document.getElementById("syllablesOut");
 const pronounceOut = document.getElementById("pronounceOut");
 const translationOut = document.getElementById("translationOut");
+const exampleOut = document.getElementById("exampleOut");
 
 let currentWord = "";
 let translationRequestId = 0;
+let exampleRequestId = 0;
 
 async function fetchTranslation(word){
   const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=en|ar`);
@@ -539,6 +583,43 @@ function loadTranslation(word){
     });
 }
 
+async function fetchExampleSentence(word){
+  const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`);
+  if(!res.ok) throw new Error("not-found");
+  const data = await res.json();
+  if(!Array.isArray(data)) throw new Error("bad-shape");
+
+  // prefer an entry that actually has an example sentence
+  for(const entry of data){
+    for(const meaning of (entry.meanings || [])){
+      for(const def of (meaning.definitions || [])){
+        if(def.example && def.example.trim()){
+          return def.example.trim();
+        }
+      }
+    }
+  }
+  throw new Error("no-example");
+}
+
+function loadExample(word){
+  const requestId = ++exampleRequestId;
+  exampleOut.textContent = "جاري البحث عن مثال…";
+  exampleOut.className = "example loading";
+
+  fetchExampleSentence(word)
+    .then(sentence => {
+      if(requestId !== exampleRequestId) return;
+      exampleOut.textContent = sentence;
+      exampleOut.className = "example";
+    })
+    .catch(() => {
+      if(requestId !== exampleRequestId) return;
+      exampleOut.textContent = "ما لقينا جملة مثال جاهزة لهذي الكلمة، جرب كلمة ثانية أو أنشئ جملتك الخاصة بها";
+      exampleOut.className = "example error";
+    });
+}
+
 function renderWord(){
   const raw = wordInput.value.trim();
   if(!raw) return;
@@ -550,6 +631,7 @@ function renderWord(){
 
   pronounceOut.textContent = "طريقة النطق: " + arabicPronunciation(currentWord);
   loadTranslation(currentWord);
+  loadExample(currentWord);
 
   result.classList.add("show");
   resetQuiz();
