@@ -154,6 +154,32 @@
     font-weight:700;
   }
 
+  .label-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:12px;
+    flex-wrap:wrap;
+  }
+
+  .speak-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:transparent;
+    color:var(--sprout-dark);
+    border:1.5px solid var(--sprout);
+    padding:6px 12px;
+    border-radius:999px;
+    font-size:12.5px;
+    font-weight:700;
+  }
+  .speak-btn:hover{ background:var(--sprout); color:#fff; }
+  .speak-btn.speaking{ background:var(--sprout); color:#fff; }
+  .speak-btn:disabled{ opacity:.4; cursor:not-allowed; border-color:var(--line); color:var(--ink-dim); }
+  .speak-btn:disabled:hover{ background:transparent; color:var(--ink-dim); }
+
   /* syllable chips: grow lighter -> deeper, like a sprouting stem */
   .syllables{
     direction:ltr;
@@ -410,7 +436,13 @@
 
     <hr class="divider">
 
-    <div class="card-label">المقاطع (Syllables)</div>
+    <div class="label-row">
+      <div class="card-label" style="margin-bottom:0;">المقاطع (Syllables)</div>
+      <button type="button" id="speakBtn" class="speak-btn" aria-label="استمع للنطق">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M19 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.6"/></svg>
+        استمع للنطق
+      </button>
+    </div>
     <div class="syllables" id="syllablesOut"></div>
 
     <div class="pronounce" id="pronounceOut"></div>
@@ -551,6 +583,28 @@ const syllablesOut = document.getElementById("syllablesOut");
 const pronounceOut = document.getElementById("pronounceOut");
 const translationOut = document.getElementById("translationOut");
 const exampleOut = document.getElementById("exampleOut");
+const speakBtn = document.getElementById("speakBtn");
+
+const speechSupported = "speechSynthesis" in window;
+if(!speechSupported){
+  speakBtn.disabled = true;
+  speakBtn.textContent = "النطق الصوتي غير مدعوم في هذا المتصفح";
+}
+
+function speakWord(word){
+  if(!speechSupported || !word) return;
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(word);
+  utter.lang = "en-US";
+  utter.rate = 0.85;
+  utter.pitch = 1;
+  utter.onstart = () => speakBtn.classList.add("speaking");
+  utter.onend = () => speakBtn.classList.remove("speaking");
+  utter.onerror = () => speakBtn.classList.remove("speaking");
+  window.speechSynthesis.speak(utter);
+}
+
+speakBtn.addEventListener("click", () => speakWord(currentWord));
 
 let currentWord = "";
 let translationRequestId = 0;
