@@ -1,602 +1,602 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>WriteUp — English Writing Practice</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>السبورة | تهجّي وتعلّم الكلمات</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Caveat:wght@600;700&family=Tajawal:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#f5f0e8;font-family:'DM Sans',system-ui,sans-serif;color:#0a0a0f;min-height:100vh}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-textarea:focus,button:focus{outline:none}
-::-webkit-scrollbar{width:5px}
-::-webkit-scrollbar-thumb{background:#c9a84c;border-radius:3px}
-.header{padding:1.3rem 2.5rem;border-bottom:1px solid rgba(0,0,0,0.09);display:flex;align-items:center;justify-content:space-between}
-.logo{font-family:'Playfair Display',serif;font-size:1.85rem;font-weight:900;letter-spacing:-0.03em}
-.logo span{color:#c9a84c}
-.tagline{font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:#8a7f70}
-.main{max-width:860px;margin:0 auto;padding:2rem 1.5rem 5rem}
-.screen{display:none;animation:fadeUp 0.4s ease}
-.screen.active{display:block}
-.hero{text-align:center;margin-bottom:2.8rem}
-.hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,4.5vw,3rem);font-weight:900;line-height:1.1;margin-bottom:.7rem}
-.hero p{color:#8a7f70;font-size:1rem;line-height:1.75;max-width:450px;margin:0 auto}
-.levels-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(225px,1fr));gap:1rem;margin-bottom:2.5rem}
-.lvl-card{background:white;border:2px solid rgba(0,0,0,0.1);border-radius:6px;padding:1.4rem 1.2rem;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
-.lvl-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.08)}
-.lvl-card.sel{background:#fffdf5;transform:translateY(-3px)}
-.lvl-card .bar{position:absolute;bottom:0;left:0;right:0;height:3px;transform:scaleX(0);transition:transform .2s}
-.lvl-card.sel .bar{transform:scaleX(1)}
-.lvl-badge{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;line-height:1}
-.lvl-name{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;margin:.35rem 0 .45rem}
-.lvl-desc{font-size:.79rem;color:#8a7f70;line-height:1.55}
-.start-btn{display:block;margin:0 auto;padding:.85rem 3rem;background:#0a0a0f;color:#f5f0e8;border:none;border-radius:5px;font-family:inherit;font-size:1rem;font-weight:500;cursor:pointer;transition:background .2s;letter-spacing:.03em}
-.start-btn:disabled{background:#ccc;color:#888;cursor:not-allowed}
-.start-btn:not(:disabled):hover{background:#c9a84c;color:#0a0a0f}
-.practice-header{display:flex;align-items:center;gap:.9rem;margin-bottom:2rem;flex-wrap:wrap}
-.back-btn{background:none;border:1.5px solid rgba(0,0,0,0.14);border-radius:5px;padding:.42rem .9rem;font-family:inherit;font-size:.84rem;cursor:pointer;transition:border-color .2s}
-.back-btn:hover{border-color:#0a0a0f}
-.lvl-tag{font-family:'Playfair Display',serif;font-weight:700;border-radius:4px;padding:.2rem .75rem;font-size:.95rem;border:1.5px solid}
-.practice-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
-.img-frame{border-radius:6px;overflow:hidden;border:1.5px solid rgba(0,0,0,0.1);background:#ede8db;aspect-ratio:4/3;position:relative}
-.img-frame img{width:100%;height:100%;object-fit:cover;transition:opacity .4s}
-.img-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
-.spin{width:28px;height:28px;border:3px solid #ede8db;border-top-color:#c9a84c;border-radius:50%;animation:spin .8s linear infinite}
-.new-img-btn{margin-top:.6rem;width:100%;background:none;border:1.5px solid rgba(0,0,0,0.12);border-radius:5px;padding:.5rem;font-family:inherit;font-size:.82rem;color:#8a7f70;cursor:pointer;transition:all .2s}
-.new-img-btn:hover{border-color:#8a7f70;color:#4a4540}
-.task-label{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:#8a7f70;margin-bottom:.5rem}
-.task-prompt{border-left:3px solid;border-radius:0 5px 5px 0;padding:.75rem 1rem;margin-bottom:1rem;font-size:.87rem;color:#4a4540;line-height:1.65;background:#ede8db}
-textarea{width:100%;min-height:185px;padding:1rem;border:1.5px solid rgba(0,0,0,0.12);border-radius:5px;font-family:inherit;font-size:.94rem;line-height:1.75;color:#0a0a0f;background:white;resize:vertical;transition:border-color .2s}
-textarea:focus{border-color:#c9a84c}
-.wcount{font-size:.77rem;font-weight:500;margin-top:.45rem;margin-bottom:.85rem}
-.check-btn{width:100%;padding:.95rem;background:#4a7c6f;color:white;border:none;border-radius:5px;font-family:inherit;font-size:.97rem;font-weight:500;cursor:pointer;transition:background .2s}
-.check-btn:disabled{background:#ccc;cursor:not-allowed}
-.check-btn:not(:disabled):hover{background:#3a6b5f}
-.loading-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:1.2rem}
-.loading-screen .bigspin{width:40px;height:40px;border:3.5px solid #ede8db;border-top-color:#c9a84c;border-radius:50%;animation:spin .8s linear infinite}
-.loading-screen p{font-family:'Playfair Display',serif;font-size:1.05rem;color:#8a7f70}
-.result-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2rem;gap:1rem;flex-wrap:wrap}
-.result-top h2{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;line-height:1.1}
-.result-top .enc{color:#4a7c6f;margin-top:.4rem;font-size:.89rem;font-style:italic;max-width:480px}
-.score-ring{position:relative;width:90px;height:90px;flex-shrink:0}
-.score-ring svg{transform:rotate(-90deg)}
-.score-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.score-num{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;line-height:1}
-.score-sub{font-size:.62rem;color:#8a7f70}
-.original-box{background:#ede8db;border-left:3px solid rgba(0,0,0,0.18);border-radius:0 5px 5px 0;padding:.95rem 1.3rem;margin-bottom:2rem}
-.original-box .olabel{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:#8a7f70;font-weight:600;margin-bottom:.45rem}
-.original-box p{font-size:.92rem;line-height:1.85}
-.corr-card{background:white;border:1.5px solid rgba(0,0,0,0.1);border-radius:6px;overflow:hidden;margin-bottom:1.1rem;animation:fadeUp .4s ease both}
-.corr-head{display:flex;align-items:center;gap:.75rem;padding:.85rem 1.3rem;background:#f5f0e8;border-bottom:1.5px solid rgba(0,0,0,0.08)}
-.corr-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.92rem;font-weight:700;flex-shrink:0}
-.corr-title{font-weight:600;font-size:.94rem}
-.corr-badge{margin-left:auto;font-size:.72rem;font-weight:700;padding:.15rem .65rem;border-radius:20px}
-.corr-body{padding:1.1rem 1.3rem}
-.no-err{color:#4a7c6f;font-weight:500;font-size:.88rem}
-.err-list{list-style:none;display:flex;flex-direction:column;gap:.9rem}
-.err-item{display:grid;grid-template-columns:10px 1fr;gap:.75rem;font-size:.87rem;line-height:1.65}
-.dot{width:8px;height:8px;border-radius:50%;margin-top:.5rem;display:block;flex-shrink:0}
-.err-wrong{color:#c0512f;text-decoration:line-through;font-weight:500}
-.err-right{color:#4a7c6f;font-weight:600}
-.err-note{color:#8a7f70}
-.rewrite-box{background:#fffdf5;border:1.5px dashed #c9a84c;border-radius:5px;padding:1rem 1.2rem;font-size:.95rem;line-height:1.9;color:#0a0a0f;margin-top:.7rem}
-.action-row{display:flex;gap:1rem;margin-top:1.5rem;flex-wrap:wrap}
-.action-row button{flex:1;padding:.9rem;border-radius:5px;font-family:inherit;font-size:.94rem;font-weight:500;cursor:pointer;transition:all .2s}
-.btn-dark{border:none;background:#0a0a0f;color:#f5f0e8}
-.btn-dark:hover{background:#c9a84c;color:#0a0a0f}
-.btn-ghost{background:white;color:#0a0a0f;border:1.5px solid rgba(0,0,0,0.15)}
-.btn-ghost:hover{border-color:#0a0a0f}
-@media(max-width:620px){.header{padding:1.1rem 1.2rem}.practice-grid{grid-template-columns:1fr}}
+  :root{
+    --board:#1f3b2c;
+    --board-dark:#173026;
+    --chalk:#f5f3ed;
+    --chalk-dim:#c9c7bd;
+    --chalk-yellow:#e8c468;
+    --chalk-blue:#8fb8d8;
+    --chalk-pink:#d98a8a;
+    --chalk-green:#9fcf9f;
+    --wood:#6b4226;
+    --wood-dark:#4a2c19;
+    --wood-light:#8a5a35;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 20% 15%, #2a4a37 0%, transparent 45%),
+      radial-gradient(circle at 80% 85%, #16281f 0%, transparent 50%),
+      var(--wood-dark);
+    font-family:'Tajawal', sans-serif;
+    color:var(--chalk);
+    display:flex;
+    justify-content:center;
+    padding:32px 16px 64px;
+  }
+
+  .frame{
+    width:100%;
+    max-width:760px;
+    background:
+      linear-gradient(180deg, var(--wood-light), var(--wood) 12%, var(--wood) 88%, var(--wood-dark));
+    border-radius:14px;
+    padding:18px;
+    box-shadow:0 30px 60px rgba(0,0,0,.5), inset 0 0 0 2px rgba(0,0,0,.25);
+  }
+
+  .board{
+    position:relative;
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.035), transparent 55%),
+      radial-gradient(ellipse at 75% 80%, rgba(255,255,255,.03), transparent 50%),
+      var(--board);
+    border-radius:6px;
+    padding:34px 28px 26px;
+    box-shadow:inset 0 0 40px rgba(0,0,0,.55), inset 0 0 3px rgba(0,0,0,.6);
+    overflow:hidden;
+  }
+
+  .board::before{
+    /* chalk dust flecks */
+    content:"";
+    position:absolute; inset:0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 12% 30%, rgba(255,255,255,.15) 0, transparent 60%),
+      radial-gradient(1.5px 1.5px at 42% 68%, rgba(255,255,255,.12) 0, transparent 60%),
+      radial-gradient(1.5px 1.5px at 78% 22%, rgba(255,255,255,.1) 0, transparent 60%),
+      radial-gradient(1.5px 1.5px at 88% 74%, rgba(255,255,255,.13) 0, transparent 60%),
+      radial-gradient(1.5px 1.5px at 60% 12%, rgba(255,255,255,.1) 0, transparent 60%);
+    pointer-events:none;
+  }
+
+  .eyebrow{
+    font-family:'Space Mono', monospace;
+    font-size:12px;
+    letter-spacing:.18em;
+    color:var(--chalk-yellow);
+    text-align:center;
+    opacity:.85;
+  }
+
+  h1{
+    font-family:'Permanent Marker', cursive;
+    direction:ltr;
+    font-size:clamp(30px,7vw,44px);
+    text-align:center;
+    margin:6px 0 2px;
+    color:var(--chalk);
+    transform:rotate(-1.2deg);
+    text-shadow:0 0 1px rgba(255,255,255,.15);
+  }
+
+  .subtitle{
+    text-align:center;
+    color:var(--chalk-dim);
+    font-size:14px;
+    margin-bottom:22px;
+  }
+
+  .chalk-rule{
+    border:none;
+    height:2px;
+    margin:22px 0;
+    background:repeating-linear-gradient(90deg, rgba(245,243,237,.35) 0 10px, transparent 10px 18px);
+  }
+
+  label.field-label{
+    display:block;
+    font-size:14px;
+    color:var(--chalk-dim);
+    margin-bottom:8px;
+  }
+
+  .input-row{
+    display:flex;
+    gap:10px;
+  }
+
+  input[type=text]{
+    flex:1;
+    direction:ltr;
+    text-align:left;
+    font-family:'Space Mono', monospace;
+    font-size:20px;
+    padding:12px 14px;
+    background:rgba(245,243,237,.06);
+    border:2px dashed rgba(245,243,237,.4);
+    border-radius:8px;
+    color:var(--chalk);
+    outline:none;
+  }
+  input[type=text]::placeholder{ color:rgba(245,243,237,.35); }
+  input[type=text]:focus{ border-color:var(--chalk-yellow); background:rgba(245,243,237,.1); }
+
+  button{
+    font-family:'Tajawal', sans-serif;
+    font-weight:700;
+    font-size:15px;
+    padding:12px 20px;
+    border-radius:8px;
+    border:2px solid var(--chalk-yellow);
+    background:transparent;
+    color:var(--chalk-yellow);
+    cursor:pointer;
+    transition:transform .12s ease, background .15s ease, color .15s ease;
+  }
+  button:hover{ background:var(--chalk-yellow); color:var(--board-dark); }
+  button:active{ transform:scale(.96); }
+  button:focus-visible, input:focus-visible{ outline:3px solid var(--chalk-blue); outline-offset:2px; }
+  button.secondary{ border-color:rgba(245,243,237,.4); color:var(--chalk-dim); }
+  button.secondary:hover{ background:rgba(245,243,237,.15); color:var(--chalk); }
+  button:disabled{ opacity:.35; cursor:not-allowed; }
+  button:disabled:hover{ background:transparent; color:var(--chalk-yellow); }
+
+  .result{ display:none; margin-top:26px; }
+  .result.show{ display:block; }
+
+  .card-label{
+    font-size:12px;
+    color:var(--chalk-dim);
+    letter-spacing:.08em;
+    margin-bottom:8px;
+  }
+
+  .syllables{
+    direction:ltr;
+    font-family:'Permanent Marker', cursive;
+    font-size:clamp(26px,6vw,38px);
+    color:var(--chalk);
+    letter-spacing:.5px;
+    line-height:1.5;
+    word-break:break-word;
+  }
+  .syllables .dash{ color:var(--chalk-yellow); padding:0 6px; }
+  .syllables .syl{ display:inline-block; }
+  .syllables .syl:nth-child(4n+2){ color:var(--chalk-blue); }
+  .syllables .syl:nth-child(4n+3){ color:var(--chalk-yellow); }
+  .syllables .syl:nth-child(4n+4){ color:var(--chalk-pink); }
+
+  .pronounce{
+    margin-top:16px;
+    font-family:'Caveat', cursive;
+    font-size:clamp(24px,5.5vw,32px);
+    color:var(--chalk-blue);
+  }
+
+  .note{
+    font-size:12px;
+    color:var(--chalk-dim);
+    margin-top:6px;
+    opacity:.75;
+  }
+
+  .quiz-box{ margin-top:8px; }
+
+  .quiz-word{
+    direction:ltr;
+    font-family:'Space Mono', monospace;
+    font-size:clamp(24px,6vw,34px);
+    letter-spacing:6px;
+    text-align:center;
+    margin:18px 0 20px;
+    color:var(--chalk);
+  }
+  .quiz-word .blank{
+    color:var(--chalk-yellow);
+    border-bottom:3px solid var(--chalk-yellow);
+    padding:0 2px;
+  }
+  .quiz-word .revealed{ color:var(--chalk-dim); }
+  .quiz-word .correct{ color:var(--chalk-green); }
+  .quiz-word .wrong{ color:var(--chalk-pink); }
+
+  .guess-row{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+  }
+  .guess-row input[type=text]{
+    max-width:70px;
+    text-align:center;
+    font-size:24px;
+    text-transform:lowercase;
+  }
+
+  .tally{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    margin:18px 0 6px;
+    direction:ltr;
+  }
+  .tally .mark{
+    width:14px; height:34px;
+    border-radius:2px;
+    background:rgba(245,243,237,.15);
+    border:1px solid rgba(245,243,237,.3);
+    transform:rotate(-4deg);
+  }
+  .tally .mark.used-correct{ background:var(--chalk-green); border-color:var(--chalk-green); }
+  .tally .mark.used-wrong{ background:var(--chalk-pink); border-color:var(--chalk-pink); }
+
+  .feedback{
+    text-align:center;
+    min-height:22px;
+    font-size:15px;
+    margin-top:10px;
+    font-weight:700;
+  }
+  .feedback.correct{ color:var(--chalk-green); }
+  .feedback.wrong{ color:var(--chalk-pink); }
+
+  .score-line{
+    text-align:center;
+    font-family:'Caveat', cursive;
+    font-size:26px;
+    color:var(--chalk-yellow);
+    margin-top:14px;
+  }
+
+  .btn-row{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    margin-top:18px;
+    flex-wrap:wrap;
+  }
+
+  .tray{
+    height:14px;
+    margin-top:16px;
+    border-radius:0 0 10px 10px;
+    background:linear-gradient(180deg, var(--wood), var(--wood-dark));
+    box-shadow:inset 0 3px 6px rgba(0,0,0,.4);
+    position:relative;
+  }
+  .chalk-stub{
+    position:absolute;
+    bottom:6px; right:24%;
+    width:38px; height:9px;
+    background:var(--chalk-yellow);
+    border-radius:3px;
+    box-shadow:14px 2px 0 -1px var(--chalk-blue), -16px -1px 0 -1px var(--chalk-pink);
+    opacity:.9;
+  }
+
+  @media (max-width:480px){
+    .board{ padding:24px 16px 20px; }
+    .syllables{ font-size:26px; }
+  }
 </style>
 </head>
 <body>
 
-<header class="header">
-  <div class="logo">Write<span>Up</span></div>
-  <div class="tagline">English Writing Practice</div>
-</header>
+<div class="frame">
+  <div class="board">
+    <div class="eyebrow">VOCAB BOARD</div>
+    <h1>Spell &amp; Say</h1>
+    <p class="subtitle">اكتب كلمة إنجليزية، وخلها السبورة تفكّها لك مقاطع، وتنطقها بالعربي، وتختبرك فيها</p>
 
-<!-- LEVEL -->
-<div id="s-level" class="screen main active">
-  <div class="hero">
-    <h1>Choose Your<br/>Writing Level</h1>
-    <p>Pick your level, describe a random image, and get instant feedback on your English writing.</p>
-  </div>
-  <div class="levels-grid" id="levels-grid"></div>
-  <button class="start-btn" id="start-btn" disabled onclick="goToPractice()">Start Writing Practice →</button>
-</div>
+    <label class="field-label" for="wordInput">الكلمة</label>
+    <div class="input-row">
+      <input type="text" id="wordInput" placeholder="مثال: computer" autocomplete="off">
+      <button id="goBtn">قسّمها</button>
+    </div>
 
-<!-- PRACTICE -->
-<div id="s-practice" class="screen main">
-  <div class="practice-header">
-    <button class="back-btn" onclick="show('level')">← Back</button>
-    <span class="lvl-tag" id="lvl-tag"></span>
-  </div>
-  <div class="practice-grid">
-    <div>
-      <div class="img-frame" id="img-frame">
-        <div class="img-loading"><div class="spin"></div></div>
-        <img id="pimg" src="" alt="Describe this" style="opacity:0" onload="imgOk()" onerror="imgErr()"/>
+    <div class="result" id="result">
+
+      <hr class="chalk-rule">
+
+      <div class="card-label">المقاطع (Syllables)</div>
+      <div class="syllables" id="syllablesOut"></div>
+
+      <div class="pronounce" id="pronounceOut"></div>
+      <div class="note">النطق تقريبي لمساعدتك على الحفظ، مو نطق علمي دقيق</div>
+
+      <hr class="chalk-rule">
+
+      <div class="card-label">اختبار الحروف — 6 محاولات</div>
+
+      <div class="quiz-box" id="quizBox">
+        <div class="tally" id="tally"></div>
+        <div class="quiz-word" id="quizWord"></div>
+        <div class="guess-row" id="guessRow">
+          <input type="text" id="letterInput" maxlength="1" autocomplete="off">
+          <button id="checkBtn">تحقق</button>
+        </div>
+        <div class="feedback" id="feedback"></div>
+        <div class="score-line" id="scoreLine" style="display:none;"></div>
+        <div class="btn-row">
+          <button id="startQuizBtn">ابدأ الاختبار</button>
+          <button id="restartQuizBtn" class="secondary" style="display:none;">أعد الاختبار</button>
+        </div>
       </div>
-      <button class="new-img-btn" onclick="loadImg()">↻ New Image</button>
-    </div>
-    <div style="display:flex;flex-direction:column">
-      <div class="task-label">Your Task</div>
-      <div class="task-prompt" id="task-prompt"></div>
-      <textarea id="utext" placeholder="Write your description here…" oninput="wcUpdate()"></textarea>
-      <div class="wcount" id="wcount" style="color:#8a7f70">0 words</div>
-      <button class="check-btn" id="check-btn" disabled onclick="doCheck()">✓ Check My Writing</button>
-    </div>
-  </div>
-</div>
 
-<!-- LOADING -->
-<div id="s-loading" class="screen main">
-  <div class="loading-screen">
-    <div class="bigspin"></div>
-    <p id="load-msg">Analyzing your writing…</p>
-  </div>
-</div>
+    </div>
 
-<!-- RESULT -->
-<div id="s-result" class="screen main">
-  <div class="practice-header">
-    <button class="back-btn" onclick="show('practice')">← Edit</button>
-    <span class="lvl-tag" id="lvl-tag2"></span>
-  </div>
-  <div class="result-top">
-    <div>
-      <h2>Writing Feedback</h2>
-      <p class="enc" id="enc-msg"></p>
-    </div>
-    <div class="score-ring">
-      <svg width="90" height="90" viewBox="0 0 90 90">
-        <circle cx="45" cy="45" r="36" fill="none" stroke="#ede8db" stroke-width="6"/>
-        <circle id="score-arc" cx="45" cy="45" r="36" fill="none" stroke="#c9a84c" stroke-width="6" stroke-linecap="round" stroke-dasharray="0 999"/>
-      </svg>
-      <div class="score-center">
-        <span class="score-num" id="score-num">–</span>
-        <span class="score-sub">/ 100</span>
-      </div>
-    </div>
-  </div>
-  <div class="original-box">
-    <div class="olabel">Your Writing</div>
-    <p id="orig-text"></p>
-  </div>
-  <div id="corrections"></div>
-  <div class="action-row">
-    <button class="btn-dark" onclick="tryAgain()">Try Same Image Again</button>
-    <button class="btn-ghost" onclick="newTopic()">New Image →</button>
+    <div class="tray"><div class="chalk-stub"></div></div>
   </div>
 </div>
 
 <script>
-/* ── LEVELS ── */
-const LEVELS = {
-  A1:{ label:"Beginner",           color:"#5aab6e", min:8,   prompt:"Write 2–3 simple sentences. What do you see in the image?" },
-  A2:{ label:"Elementary",         color:"#3d9dbf", min:20,  prompt:"Write 3–5 sentences. Describe the people, place, or objects you see." },
-  B1:{ label:"Intermediate",       color:"#c9a84c", min:45,  prompt:"Write a short paragraph (5–8 sentences). What is happening and where?" },
-  B2:{ label:"Upper-Intermediate", color:"#d4845a", min:75,  prompt:"Write 2 paragraphs: describe the scene, then share your thoughts about it." },
-  C1:{ label:"Advanced",           color:"#9b6dbd", min:110, prompt:"Write 2–3 detailed paragraphs. Describe vividly, analyze the mood, and tell the story." },
-  C2:{ label:"Mastery",            color:"#c0512f", min:160, prompt:"Write an expressive piece using rich vocabulary, complex structures, and deeper meaning." },
-};
+/* ---------- Syllable splitting (heuristic, English) ---------- */
+function splitSyllables(word){
+  const w = word.toLowerCase();
+  const re = /[^aeiouy]*[aeiouy]+(?:[^aeiouy]*$|[^aeiouy](?=[^aeiouy]))?/gi;
+  const parts = w.match(re);
+  if(!parts || parts.length === 0) return [w];
+  // re-case to match original word's letters positionally
+  let out = [];
+  let i = 0;
+  for(const p of parts){
+    out.push(word.slice(i, i + p.length));
+    i += p.length;
+  }
+  if(i < word.length){ out[out.length-1] += word.slice(i); }
+  return out;
+}
 
-/* ── IMAGE IDS ── */
-const IMG_IDS=[10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200,
-  210,220,230,240,250,260,270,280,290,300,310,320,330,340,350,360,370,380,390,400,
-  410,420,430,440,450,460,470,480,490,500,514,520,534,540,550,560,570,580,590,600];
-
-/* ── SPELLING DICTIONARY ── */
-const SPELL={
-  // Buildings & places
-  "bilding":"building","buidling":"building","biulding":"building","biuldings":"buildings",
-  "bildings":"buildings","buildng":"building","bldng":"building",
-  "hous":"house","hose":"house","houes":"house","housse":"house",
-  "stret":"street","sreet":"street","stree":"street","streat":"street",
-  "brij":"bridge","bridg":"bridge","brigde":"bridge",
-  "chursh":"church","chuch":"church","chirch":"church",
-  "moskue":"mosque","moske":"mosque","masque":"mosque",
-  "windoe":"window","windw":"window","wndow":"window","windo":"window",
-  "dore":"door","dor":"door","dooor":"door",
-  "florr":"floor","flore":"floor","foor":"floor",
-  "celing":"ceiling","ceeling":"ceiling","cieling":"ceiling",
-  "wale":"wall","wal":"wall","wwall":"wall",
-  "staris":"stairs","stares":"stairs","stear":"stair",
-  "rouf":"roof","rof":"roof","rooof":"roof",
-  // Nature
-  "floer":"flower","flwer":"flower","flowe":"flower","flowre":"flower","fower":"flower","flouer":"flower",
-  "floers":"flowers","flwers":"flowers","flowes":"flowers","fowers":"flowers",
-  "tress":"trees","tre":"tree","treee":"tree","trre":"tree",
-  "lief":"leaf","leef":"leaf","leav":"leaf",
-  "leives":"leaves","leafs":"leaves","leavs":"leaves",
-  "gras":"grass","grss":"grass","grases":"grasses",
-  "mountan":"mountain","mountian":"mountain","moutain":"mountain","montain":"mountain","mountin":"mountain",
-  "mountans":"mountains","mountians":"mountains","moutains":"mountains",
-  "rivr":"river","rivver":"river","rvier":"river",
-  "laek":"lake","lak":"lake","lakee":"lake",
-  "oshean":"ocean","ocen":"ocean","ocaen":"ocean","oceaan":"ocean",
-  "beech":"beach","beatch":"beach","bech":"beach",
-  "forst":"forest","forrest":"forest","forset":"forest",
-  "cloude":"cloud","clod":"cloud","clud":"cloud","cloudd":"cloud",
-  "cloudes":"clouds","clods":"clouds","cluds":"clouds",
-  "sno":"snow","snoe":"snow","snwo":"snow",
-  "rian":"rain","raen":"rain","rein":"rain",
-  "sunlght":"sunlight","sunlite":"sunlight","sunligt":"sunlight",
-  "snad":"sand","samd":"sand","sannd":"sand",
-  "rok":"rock","rck":"rock","roke":"rock",
-  "wter":"water","watr":"water","watter":"water",
-  "fier":"fire","fre":"fire","fyre":"fire",
-  // Colors
-  "gren":"green","grene":"green","greem":"green",
-  "bloo":"blue","bleu":"blue","bule":"blue",
-  "redd":"red","rede":"red","reedd":"red",
-  "yelo":"yellow","yellw":"yellow","yelow":"yellow","yallow":"yellow",
-  "oranje":"orange","orang":"orange","orenge":"orange",
-  "pruple":"purple","purpl":"purple","perple":"purple","purpel":"purple",
-  "pinck":"pink","pnik":"pink","pnk":"pink",
-  "wite":"white","whte":"white","withe":"white","whiet":"white",
-  "blakc":"black","blck":"black","balck":"black",
-  "graey":"grey","gery":"grey","grye":"grey","grai":"gray",
-  "browen":"brown","brwn":"brown","bron":"brown","borwn":"brown",
-  // Animals
-  "animel":"animal","animale":"animal","annimal":"animal",
-  "doge":"dog","dogg":"dog","doog":"dog",
-  "catt":"cat","kat":"cat","katt":"cat",
-  "brid":"bird","brird":"bird","berd":"bird",
-  "fsh":"fish","fisch":"fish","fiish":"fish",
-  "hrose":"horse","hors":"horse","hoarse":"horse",
-  "berd":"bird",
-  // People & actions
-  "peple":"people","pepole":"people","poeple":"people","peopl":"people","pepel":"people",
-  "peson":"person","persn":"person","persone":"person","persom":"person",
-  "chid":"child","childe":"child","chiled":"child",
-  "childs":"children","childrens":"children",
-  "wman":"woman","womam":"woman","wooman":"woman",
-  "mam":"man","maan":"man","mann":"man",
-  "siting":"sitting","sitng":"sitting","sittng":"sitting",
-  "standig":"standing","standng":"standing","staning":"standing",
-  "walkng":"walking","walknig":"walking","waking":"walking",
-  "runing":"running","rnning":"running","ruunning":"running",
-  "smilling":"smiling","smilng":"smiling","smilling":"smiling",
-  "lookin":"looking","lookng":"looking","locking":"looking",
-  "wering":"wearing","wearng":"wearing","wearring":"wearing",
-  "holdig":"holding","holdng":"holding","hodling":"holding",
-  "ridng":"riding","rideing":"riding","rding":"riding",
-  "eatng":"eating","eatting":"eating","eaing":"eating",
-  "drinkng":"drinking","drinkig":"drinking","drnking":"drinking",
-  "talkng":"talking","talkig":"talking","taling":"talking",
-  "plaing":"playing","playng":"playing","plying":"playing",
-  "wrking":"working","workng":"working","woring":"working",
-  "slepng":"sleeping","sleepng":"sleeping","sleping":"sleeping",
-  "swmming":"swimming","swimmng":"swimming","swimng":"swimming",
-  // Design & objects
-  "dizin":"design","desing":"design","dezign":"design","desig":"design",
-  "styl":"style","stile":"style","styel":"style",
-  "colr":"color","collor":"color","colore":"color","coulor":"color",
-  "sizze":"size","siz":"size","siize":"size",
-  "shaep":"shape","shpe":"shape","sahpe":"shape",
-  "phto":"photo","phooto":"photo","phoot":"photo",
-  "pictur":"picture","pictuer":"picture","picter":"picture","picrure":"picture",
-  "imagge":"image","imge":"image","iamge":"image",
-  // Common words
-  "beutiful":"beautiful","beautifull":"beautiful","beatiful":"beautiful","beautyful":"beautiful","beatifull":"beautiful","beutifull":"beautiful",
-  "intresting":"interesting","intersting":"interesting","intresing":"interesting","interestring":"interesting",
-  "becuse":"because","becose":"because","becaus":"because","beacuse":"because","becasue":"because",
-  "freind":"friend","frend":"friend","firend":"friend","freidn":"friend",
-  "writeing":"writing","writting":"writing","writng":"writing",
-  "haveing":"having","comeing":"coming","comming":"coming",
-  "recieve":"receive","recive":"receive","recevie":"receive",
-  "seperate":"separate","seprate":"separate","separete":"separate",
-  "definately":"definitely","definitly":"definitely","definetly":"definitely","defenitely":"definitely",
-  "goverment":"government","enviroment":"environment","enviorment":"environment",
-  "wierd":"weird","wich":"which","whith":"with","wih":"with",
-  "teh":"the","hte":"the","adn":"and","nad":"and","taht":"that","thta":"that",
-  "thier":"their","alot":"a lot","allot":"a lot",
-  "doesnt":"doesn't","dont":"don't","cant":"can't","wont":"won't","isnt":"isn't","wasnt":"wasn't","shouldnt":"shouldn't","couldnt":"couldn't","wouldnt":"wouldn't",
-  "im":"I'm","iam":"I am",
-  "hight":"height","higth":"height","heigth":"height","heigh":"height",
-  "biger":"bigger","mroe":"more","moer":"more",
-  "vrey":"very","veyr":"very","vry":"very","verry":"very",
-  "loks":"looks","lok":"look","loook":"look",
-  "smal":"small","smale":"small","smll":"small",
-  "carefull":"careful","usefull":"useful","helpfull":"helpful","beautifuly":"beautifully","wonderfull":"wonderful","powerfull":"powerful","peacefull":"peaceful","successfull":"successful",
-  "realy":"really","actualy":"actually","generaly":"generally","usualy":"usually","normaly":"normally","finaly":"finally","totaly":"totally","absolutly":"absolutely",
-  "grammer":"grammar","sentance":"sentence","discribe":"describe","discription":"description",
-  "explane":"explain","explaination":"explanation","independant":"independent",
-  "occurence":"occurrence","millenium":"millennium","neccessary":"necessary","necesary":"necessary",
-  "untill":"until","allready":"already","eventhough":"even though",
-  "happey":"happy","happi":"happy","hapy":"happy","happpy":"happy",
-  "sadde":"sad","sadd":"sad",
-  "angy":"angry","angrey":"angry","angrry":"angry",
-  "tierd":"tired","tirred":"tired","tyred":"tired",
-  "hungrey":"hungry","hungy":"hungry","hungery":"hungry",
-  "scred":"scared","scarred":"scared","scard":"scared",
-  "exited":"excited","excitted":"excited","exciited":"excited",
-  "intresting":"interesting","borring":"boring","boreing":"boring",
-  "nise":"nice","niec":"nice","niice":"nice",
-  "larg":"large","lagre":"large","laege":"large",
-  "smalle":"small","samll":"small",
-  "talle":"tall","tal":"tall","tal":"tall",
-  "shrot":"short","shrot":"short","shotr":"short",
-  "neer":"near","ner":"near","naer":"near",
-  "fer":"far","faar":"far","farr":"far",
-  "hgih":"high","hih":"high","hiigh":"high",
-  "lwo":"low","lwow":"low","loow":"low",
-  "fsat":"fast","fats":"fast","fasst":"fast",
-  "slwo":"slow","sloow":"slow","sllow":"slow",
-  "bigg":"big","bige":"big","biig":"big",
-  // cry/dry confusion
-  "cry":"cry",// keep — valid word
-};
-
-/* ── GRAMMAR PATTERNS ── */
-const GRAMMAR=[
-  {re:/\bI\s+is\b/g,       w:"I is",         r:"I am",         n:'Use "am" with "I": "I am…"'},
-  {re:/\bI\s+are\b/g,      w:"I are",        r:"I am",         n:'Use "am" with "I": "I am…"'},
-  {re:/\bhe\s+are\b/gi,    w:"he are",       r:"he is",        n:'"He" is singular. Use "is": "he is…"'},
-  {re:/\bshe\s+are\b/gi,   w:"she are",      r:"she is",       n:'"She" is singular. Use "is": "she is…"'},
-  {re:/\bit\s+are\b/gi,    w:"it are",       r:"it is",        n:'"It" is singular. Use "is": "it is…"'},
-  {re:/\bthey\s+is\b/gi,   w:"they is",      r:"they are",     n:'"They" is plural. Use "are": "they are…"'},
-  {re:/\bwe\s+is\b/gi,     w:"we is",        r:"we are",       n:'"We" is plural. Use "are": "we are…"'},
-  {re:/\bit\s+have\b/gi,   w:"it have",      r:"it has",       n:'"It" uses "has" in third person: "it has…"'},
-  {re:/\bhe\s+have\b/gi,   w:"he have",      r:"he has",       n:'"He" uses "has" in third person: "he has…"'},
-  {re:/\bshe\s+have\b/gi,  w:"she have",     r:"she has",      n:'"She" uses "has" in third person: "she has…"'},
-  {re:/\bhe\s+go\b/gi,     w:"he go",        r:"he goes",      n:'Third-person singular needs "-s": "he goes"'},
-  {re:/\bshe\s+go\b/gi,    w:"she go",       r:"she goes",     n:'Third-person singular needs "-s": "she goes"'},
-  {re:/\band\s+also\b/gi,  w:"and also",     r:"and / also",   n:'"And also" is redundant. Use just "and" or just "also".'},
-  {re:/\balso\s+I\s+see\b/gi,w:"also I see", r:"I also see",   n:'"Also" should come after the subject: "I also see…"'},
-  {re:/\bvery\s+very\b/gi, w:"very very",    r:"extremely",    n:'Avoid repeating "very". Use "extremely" or a stronger word.'},
-  {re:/\bmore\s+better\b/gi,w:"more better", r:"better",       n:'"Better" is already comparative. Don\'t add "more".'},
-  {re:/\bmore\s+bigger\b/gi,w:"more bigger", r:"bigger",       n:'"Bigger" is already comparative. Don\'t add "more".'},
-  {re:/\bcan\s+sees\b/gi,  w:"can sees",     r:"can see",      n:'After modal verbs (can, will, must…) use the base form: "see" not "sees".'},
-  {re:/\bmust\s+to\b/gi,   w:"must to",      r:"must",         n:'"Must" does not need "to". Write: "I must go" not "I must to go".'},
-  {re:/\bdiscuss\s+about\b/gi,w:"discuss about",r:"discuss",   n:'"Discuss" does not need "about": "Let\'s discuss the topic."'},
-  {re:/\bexplain\s+about\b/gi,w:"explain about",r:"explain",   n:'"Explain" does not need "about": "Please explain the idea."'},
-  {re:/\bmarried\s+with\b/gi,w:"married with",r:"married to",  n:'Say "married to", not "married with".'},
-  {re:/\binterested\s+on\b/gi,w:"interested on",r:"interested in",n:'Say "interested in", not "interested on".'},
-  {re:/\bdepend\s+of\b/gi, w:"depend of",    r:"depend on",    n:'Say "depend on", not "depend of".'},
+/* ---------- Rough English -> Arabic phonetic approximation ---------- */
+const DIGRAPHS = [
+  ["tch","تش"], ["igh","اي"],
+  ["sh","ش"], ["ch","تش"], ["th","ث"], ["ph","ف"], ["wh","و"],
+  ["ng","نغ"], ["ck","ك"], ["qu","كو"],
+  ["ee","ي"], ["ea","ي"], ["oo","و"], ["ou","او"], ["ow","او"],
+  ["ai","ي"], ["ay","اي"], ["oy","وي"], ["oi","وي"],
+  ["oa","و"], ["ie","اي"], ["ue","يو"], ["au","او"], ["aw","او"]
 ];
 
-/* ── STYLE TIPS ── */
-function styleTips(text,level){
-  const tips=[];
-  const sents=text.split(/[.!?]+/).filter(s=>s.trim().length>2);
-  const words=text.trim().split(/\s+/);
+const SINGLES = {
+  a:"ا", b:"ب", c:"ك", d:"د", e:"ي", f:"ف", g:"غ", h:"ه",
+  i:"ي", j:"ج", k:"ك", l:"ل", m:"م", n:"ن", o:"و", p:"ب",
+  q:"ك", r:"ر", s:"س", t:"ت", u:"و", v:"ف", w:"و", x:"كس",
+  y:"ي", z:"ز"
+};
 
-  // Too many "I" starts
-  if(sents.length>=3){
-    const iCount=sents.filter(s=>/^\s*i\b/i.test(s)).length;
-    if(iCount>=Math.ceil(sents.length*0.7))
-      tips.push({issue:"Too many sentences starting with 'I'",
-        suggestion:'Vary your openings. Try: "In the image…", "The scene shows…", "There is…", "On the left…"'});
+function arabicForSyllable(syl){
+  let s = syl.toLowerCase();
+  let out = "";
+  let i = 0;
+  while(i < s.length){
+    let matched = false;
+    // soft c/g before e,i,y
+    if(s[i] === "c" && /[eiy]/.test(s[i+1] || "")){
+      out += "س"; i++; matched = true;
+    } else if(s[i] === "g" && /[eiy]/.test(s[i+1] || "")){
+      out += "ج"; i++; matched = true;
+    }
+    if(matched) continue;
+
+    for(const [pat, ar] of DIGRAPHS){
+      if(s.startsWith(pat, i)){
+        out += ar;
+        i += pat.length;
+        matched = true;
+        break;
+      }
+    }
+    if(matched) continue;
+
+    const ch = s[i];
+    if(SINGLES[ch]) out += SINGLES[ch];
+    i++;
   }
-
-  // Overused word
-  const freq={};
-  words.forEach(w=>{const k=w.toLowerCase().replace(/[^a-z]/g,"");if(k.length>3)freq[k]=(freq[k]||0)+1;});
-  const skip=new Set(["this","that","with","have","from","they","there","their","also","very","like","image","picture","scene"]);
-  const over=Object.entries(freq).filter(([w,c])=>c>=3&&!skip.has(w)).sort((a,b)=>b[1]-a[1]);
-  if(over.length)
-    tips.push({issue:`Word "${over[0][0]}" used ${over[0][1]} times`,
-      suggestion:`Avoid repeating the same word. Use synonyms or rephrase the sentence.`});
-
-  // Short response
-  if(words.length<LEVELS[level].min)
-    tips.push({issue:"Response is shorter than recommended",
-      suggestion:`For level ${level}, try to write at least ${LEVELS[level].min} words to fully practice your English.`});
-
-  // No adjectives (longer texts)
-  if(words.length>15&&!/(tall|large|big|small|old|new|beautiful|colorful|dark|bright|crowded|quiet|busy|ancient|modern|high|wide|narrow|long|short|huge|tiny|narrow|curved|straight|round|square|flat|steep|gentle|rough|smooth|shiny|dull|clear|cloudy|sunny|rainy|windy|cold|warm|hot)/i.test(text))
-    tips.push({issue:"No descriptive adjectives found",
-      suggestion:'Add adjectives to paint a vivid picture: "tall building", "cloudy sky", "narrow street", "bright sunlight".'});
-
-  return tips.slice(0,3);
+  return out || s;
 }
 
-/* ── REWRITE HELPER ── */
-function autoRewrite(text){
-  let t=text;
-  Object.entries(SPELL).forEach(([w,r])=>{
-    t=t.replace(new RegExp(`\\b${w}\\b`,"gi"),m=>/^[A-Z]/.test(m)?r[0].toUpperCase()+r.slice(1):r);
-  });
-  // a/an
-  t=t.replace(/\ba\s+([aeiouAEIOU]\w)/g,"an $1");
-  t=t.replace(/\ban\s+([^aeiouAEIOU\s]\w)/g,(m,c)=>/^(hour|honest|honour)/i.test(c)?m:"a "+c);
-  // common grammar
-  t=t.replace(/\bI\s+is\b/g,"I am").replace(/\bI\s+are\b/g,"I am");
-  t=t.replace(/\bhe\s+are\b/gi,"he is").replace(/\bshe\s+are\b/gi,"she is");
-  t=t.replace(/\bthey\s+is\b/gi,"they are").replace(/\bwe\s+is\b/gi,"we are");
-  t=t.replace(/\bit\s+have\b/gi,"it has").replace(/\bhe\s+have\b/gi,"he has").replace(/\bshe\s+have\b/gi,"she has");
-  t=t.replace(/\band\s+also\b/gi,"and");
-  t=t.replace(/\balso\s+I\s+see\b/gi,"I also see");
-  t=t.replace(/\bmore\s+better\b/gi,"better").replace(/\bmore\s+bigger\b/gi,"bigger");
-  t=t.replace(/\bmust\s+to\b/gi,"must");
-  t=t.replace(/\bdiscuss\s+about\b/gi,"discuss");
-  t=t.replace(/\bexplain\s+about\b/gi,"explain");
-  // fix lonely "i" -> "I" (standalone pronoun)
-  t=t.replace(/(?<![a-zA-Z])\bi\b(?![a-zA-Z])/g,"I");
-  // ensure ending punctuation
-  const tr=t.trim();
-  if(tr.length>10&&!/[.!?]$/.test(tr)) t=tr+".";
-  return t;
+function arabicPronunciation(word){
+  const syls = splitSyllables(word);
+  return syls.map(arabicForSyllable).join("-");
 }
 
-/* ── MAIN ANALYSIS ── */
-function analyze(text,level){
-  const words=text.split(/\s+/);
-  const spellingErrors=[],seen=new Set();
+/* ---------- Wiring: split + pronounce ---------- */
+const wordInput = document.getElementById("wordInput");
+const goBtn = document.getElementById("goBtn");
+const result = document.getElementById("result");
+const syllablesOut = document.getElementById("syllablesOut");
+const pronounceOut = document.getElementById("pronounceOut");
 
-  words.forEach(raw=>{
-    const c=raw.toLowerCase().replace(/[^a-z']/g,"");
-    if(c.length<2||seen.has(c)) return;
-    // Skip "cry" and other valid common words
-    const valid=new Set(["cry","dry","fly","fry","try","shy","sky","spy","sly","pry","why","gym","ivy","elm"]);
-    if(valid.has(c)) return;
-    if(SPELL[c]){seen.add(c);spellingErrors.push({wrong:raw,correct:SPELL[c],explanation:`"${raw}" is misspelled. The correct spelling is "${SPELL[c]}".`});}
-  });
+let currentWord = "";
 
-  // Detect standalone lowercase "i" (should be capital "I")
-  const lowerI = /(?<![a-z])\bi\b(?![a-z])/g;
-  if(lowerI.test(text) && !seen.has("i_cap")){
-    seen.add("i_cap");
-    spellingErrors.unshift({wrong:"i (lowercase)",correct:"I (capital)",explanation:'The pronoun "I" must always be written with a capital letter in English.'});
+function renderWord(){
+  const raw = wordInput.value.trim();
+  if(!raw) return;
+  currentWord = raw.replace(/[^a-zA-Z]/g, "");
+  if(!currentWord) return;
+
+  const syls = splitSyllables(currentWord);
+  syllablesOut.innerHTML = syls
+    .map(s => `<span class="syl">${s}</span>`)
+    .join('<span class="dash">·</span>');
+
+  pronounceOut.textContent = "طريقة النطق: " + arabicPronunciation(currentWord);
+
+  result.classList.add("show");
+  resetQuiz();
+}
+
+goBtn.addEventListener("click", renderWord);
+wordInput.addEventListener("keydown", e => { if(e.key === "Enter") renderWord(); });
+
+/* ---------- Quiz: 6 rounds, one hidden letter each ---------- */
+const quizWord = document.getElementById("quizWord");
+const tally = document.getElementById("tally");
+const letterInput = document.getElementById("letterInput");
+const checkBtn = document.getElementById("checkBtn");
+const feedback = document.getElementById("feedback");
+const scoreLine = document.getElementById("scoreLine");
+const startQuizBtn = document.getElementById("startQuizBtn");
+const restartQuizBtn = document.getElementById("restartQuizBtn");
+const guessRow = document.getElementById("guessRow");
+
+const TOTAL_ROUNDS = 6;
+let round = 0;
+let score = 0;
+let usedIndices = [];
+let currentHiddenIndex = -1;
+let roundResults = []; // 'pending' | 'correct' | 'wrong'
+let quizActive = false;
+
+function resetQuiz(){
+  round = 0;
+  score = 0;
+  usedIndices = [];
+  currentHiddenIndex = -1;
+  roundResults = [];
+  quizActive = false;
+  quizWord.textContent = "";
+  feedback.textContent = "";
+  feedback.className = "feedback";
+  scoreLine.style.display = "none";
+  scoreLine.textContent = "";
+  guessRow.style.display = "none";
+  startQuizBtn.style.display = "inline-block";
+  restartQuizBtn.style.display = "none";
+  buildTally();
+}
+
+function buildTally(){
+  tally.innerHTML = "";
+  for(let i=0; i<TOTAL_ROUNDS; i++){
+    const d = document.createElement("div");
+    d.className = "mark";
+    tally.appendChild(d);
   }
-
-  const grammarErrors=[];
-  GRAMMAR.forEach(({re,w,r,n})=>{
-    if(re.test(text)){re.lastIndex=0;grammarErrors.push({wrong:w,correct:r,explanation:n});}
-    re.lastIndex=0;
-  });
-
-  // a/an check
-  const aVowel=/\ba\s+([aeiou]\w+)/i.exec(text);
-  if(aVowel) grammarErrors.push({wrong:`a ${aVowel[1]}`,correct:`an ${aVowel[1]}`,explanation:`Use "an" before vowel sounds: "an ${aVowel[1]}".`});
-
-  const anCon=/\ban\s+([^aeiou\s]\w+)/i.exec(text);
-  if(anCon&&!/^(hour|honest|honour)/i.test(anCon[1]))
-    grammarErrors.push({wrong:`an ${anCon[1]}`,correct:`a ${anCon[1]}`,explanation:`Use "a" before consonant sounds: "a ${anCon[1]}".`});
-
-  // missing punctuation
-  if(text.trim().length>20&&!/[.!?]$/.test(text.trim()))
-    grammarErrors.push({wrong:"(no final punctuation)",correct:"End with . or ! or ?",explanation:"Always end sentences with a full stop (.), exclamation mark (!), or question mark (?)."});
-
-  const styleAdvice=styleTips(text,level);
-  const rewrite=autoRewrite(text);
-
-  // Score
-  let score=72;
-  score-=Math.min(18,spellingErrors.length*5);
-  score-=Math.min(14,grammarErrors.filter(e=>!e.wrong.includes("punctuation")).length*4);
-  score-=styleAdvice.length*2;
-  const wc=words.filter(w=>w.length>1).length;
-  if(wc>=LEVELS[level].min*1.2) score+=8;
-  if(spellingErrors.length===0) score+=8;
-  if(grammarErrors.length===0) score+=6;
-  if(styleAdvice.length===0) score+=4;
-  score=Math.max(22,Math.min(100,Math.round(score)));
-
-  const encouragement=score>=90?"Excellent work! Your writing is clear and well-structured. Keep it up!"
-    :score>=75?"Good job! You communicated your ideas well. Review the tips below to improve further."
-    :score>=60?"Nice effort! You're making progress. Study the corrections below carefully."
-    :"Great start! Every mistake is a learning opportunity. Review the feedback and try again!";
-
-  return{score,spellingErrors,grammarErrors,styleAdvice,rewrite,encouragement};
 }
 
-/* ── APP ── */
-let curLevel=null,curImgId=-1,userText="";
-
-function show(n){
-  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
-  document.getElementById("s-"+n).classList.add("active");
-  window.scrollTo(0,0);
+function updateTally(){
+  const marks = tally.querySelectorAll(".mark");
+  marks.forEach((m, idx) => {
+    m.className = "mark";
+    if(roundResults[idx] === "correct") m.classList.add("used-correct");
+    else if(roundResults[idx] === "wrong") m.classList.add("used-wrong");
+  });
 }
 
-/* Build cards */
-const grid=document.getElementById("levels-grid");
-Object.entries(LEVELS).forEach(([key,cfg])=>{
-  const c=document.createElement("div");
-  c.className="lvl-card";c.dataset.level=key;
-  c.innerHTML=`<div class="bar" style="background:${cfg.color}"></div>
-    <div class="lvl-badge" style="color:${cfg.color}">${key}</div>
-    <div class="lvl-name">${cfg.label}</div>
-    <div class="lvl-desc">${cfg.prompt.slice(0,65)}…</div>`;
-  c.addEventListener("click",()=>{
-    document.querySelectorAll(".lvl-card").forEach(x=>{x.classList.remove("sel");x.style.borderColor="rgba(0,0,0,0.1)";x.style.boxShadow="";});
-    c.classList.add("sel");c.style.borderColor=cfg.color;c.style.boxShadow=`0 6px 24px ${cfg.color}28`;
-    curLevel=key;document.getElementById("start-btn").disabled=false;
-  });
-  grid.appendChild(c);
+function pickHiddenIndex(){
+  const len = currentWord.length;
+  if(usedIndices.length >= len) usedIndices = [];
+  let idx;
+  do { idx = Math.floor(Math.random() * len); } while(usedIndices.includes(idx));
+  usedIndices.push(idx);
+  return idx;
+}
+
+function renderQuizWord(revealAll){
+  let html = "";
+  for(let i=0; i<currentWord.length; i++){
+    const ch = currentWord[i];
+    if(i === currentHiddenIndex && !revealAll){
+      html += `<span class="blank">_</span>`;
+    } else if(i === currentHiddenIndex && revealAll){
+      const cls = feedback.className.includes("correct") ? "correct" : "wrong";
+      html += `<span class="${cls}">${ch}</span>`;
+    } else {
+      html += `<span class="revealed">${ch}</span>`;
+    }
+  }
+  quizWord.innerHTML = html;
+}
+
+function startRound(){
+  if(round >= TOTAL_ROUNDS){
+    finishQuiz();
+    return;
+  }
+  currentHiddenIndex = pickHiddenIndex();
+  feedback.textContent = "";
+  feedback.className = "feedback";
+  letterInput.value = "";
+  guessRow.style.display = "flex";
+  renderQuizWord(false);
+  letterInput.focus();
+}
+
+function finishQuiz(){
+  quizActive = false;
+  guessRow.style.display = "none";
+  scoreLine.style.display = "block";
+  scoreLine.textContent = `نتيجتك: ${score} من ${TOTAL_ROUNDS} 🎯`;
+  startQuizBtn.style.display = "none";
+  restartQuizBtn.style.display = "inline-block";
+}
+
+function checkGuess(){
+  if(!quizActive) return;
+  const guess = letterInput.value.trim().toLowerCase();
+  if(!guess) return;
+  const actual = currentWord[currentHiddenIndex].toLowerCase();
+  const isCorrect = guess === actual;
+
+  if(isCorrect){
+    score++;
+    feedback.textContent = "صح! 👏";
+    feedback.className = "feedback correct";
+    roundResults[round] = "correct";
+  } else {
+    feedback.textContent = `خطأ، الحرف الصحيح: ${actual}`;
+    feedback.className = "feedback wrong";
+    roundResults[round] = "wrong";
+  }
+  renderQuizWord(true);
+  updateTally();
+
+  round++;
+  guessRow.style.display = "none";
+
+  setTimeout(() => {
+    if(round < TOTAL_ROUNDS){
+      startRound();
+    } else {
+      finishQuiz();
+    }
+  }, 1100);
+}
+
+startQuizBtn.addEventListener("click", () => {
+  if(!currentWord) return;
+  quizActive = true;
+  round = 0; score = 0; usedIndices = []; roundResults = [];
+  buildTally();
+  startQuizBtn.style.display = "none";
+  scoreLine.style.display = "none";
+  startRound();
 });
 
-function goToPractice(){
-  if(!curLevel)return;
-  const cfg=LEVELS[curLevel];
-  ["lvl-tag","lvl-tag2"].forEach(id=>{
-    const el=document.getElementById(id);
-    el.textContent=`${curLevel} · ${cfg.label}`;
-    el.style.color=cfg.color;el.style.borderColor=cfg.color;
-  });
-  document.getElementById("task-prompt").textContent=cfg.prompt;
-  document.getElementById("task-prompt").style.borderColor=cfg.color;
-  document.getElementById("utext").value="";
-  wcUpdate();loadImg();show("practice");
-}
+restartQuizBtn.addEventListener("click", () => {
+  resetQuiz();
+  quizActive = true;
+  startQuizBtn.style.display = "none";
+  startRound();
+});
 
-function randId(ex){let id;do{id=IMG_IDS[Math.floor(Math.random()*IMG_IDS.length)];}while(id===ex);return id;}
-
-function loadImg(){
-  curImgId=randId(curImgId);
-  const img=document.getElementById("pimg"),spin=document.querySelector("#img-frame .img-loading");
-  img.style.opacity="0";spin.style.display="flex";
-  img.src=`https://picsum.photos/id/${curImgId}/600/450`;
-}
-function imgOk(){document.getElementById("pimg").style.opacity="1";document.querySelector("#img-frame .img-loading").style.display="none";}
-function imgErr(){curImgId=randId(curImgId);document.getElementById("pimg").src=`https://picsum.photos/id/${curImgId}/600/450`;}
-
-function wcUpdate(){
-  const t=document.getElementById("utext").value;
-  const w=t.trim()?t.trim().split(/\s+/).length:0;
-  const cfg=LEVELS[curLevel];
-  const el=document.getElementById("wcount"),btn=document.getElementById("check-btn");
-  el.textContent=`${w} words ${w>=cfg.min?"✓":"· need "+cfg.min+"+"}`;
-  el.style.color=w>=cfg.min?"#4a7c6f":"#c0512f";
-  btn.disabled=w<3;
-}
-
-function doCheck(){
-  userText=document.getElementById("utext").value.trim();
-  if(!userText||userText.split(/\s+/).length<3)return;
-  show("loading");
-  const msgs=["Analyzing your writing…","Checking spelling…","Checking grammar…","Almost done…"];
-  let i=0;
-  const t=setInterval(()=>{i=(i+1)%msgs.length;document.getElementById("load-msg").textContent=msgs[i];},900);
-  setTimeout(()=>{clearInterval(t);renderResult(analyze(userText,curLevel));show("result");},1400);
-}
-
-function renderResult(fb){
-  const circ=2*Math.PI*36,dash=circ*(fb.score/100);
-  const color=fb.score>=85?"#4a7c6f":fb.score>=65?"#c9a84c":"#c0512f";
-  const arc=document.getElementById("score-arc");
-  arc.setAttribute("stroke-dasharray",`${dash} ${circ}`);
-  arc.setAttribute("stroke",color);
-  const sn=document.getElementById("score-num");sn.textContent=fb.score;sn.style.color=color;
-  document.getElementById("enc-msg").textContent=fb.encouragement;
-  document.getElementById("orig-text").textContent=userText;
-  const box=document.getElementById("corrections");box.innerHTML="";
-
-  box.appendChild(card("✎","#fce4d6","#c0512f","Spelling",fb.spellingErrors,
-    it=>`<span class="err-wrong">${it.wrong}</span> → <span class="err-right">${it.correct}</span><br/><span class="err-note">${it.explanation}</span>`,"#c0512f"));
-  box.appendChild(card("⚙","#d6e8f5","#2a6fa8","Grammar",fb.grammarErrors,
-    it=>`<span class="err-wrong">${it.wrong}</span> → <span class="err-right">${it.correct}</span><br/><span class="err-note">${it.explanation}</span>`,"#2a6fa8"));
-  box.appendChild(card("✦","#d6f0e8","#4a7c6f","Writing Style",fb.styleAdvice,
-    it=>`<strong>${it.issue}</strong><br/><span class="err-note">${it.suggestion}</span>`,"#4a7c6f"));
-
-  const rw=document.createElement("div");rw.className="corr-card";
-  rw.innerHTML=`<div class="corr-head">
-    <div class="corr-icon" style="background:#f5f0d6;color:#8a7a2a">✐</div>
-    <span class="corr-title">Suggested Rewrite</span></div>
-    <div class="corr-body">
-    <p style="font-size:.78rem;color:#8a7f70;margin-bottom:.7rem">Here's an improved version keeping your ideas:</p>
-    <div class="rewrite-box">${fb.rewrite}</div></div>`;
-  box.appendChild(rw);
-}
-
-function card(icon,bg,fg,title,items,render,dot){
-  const d=document.createElement("div");d.className="corr-card";
-  const badge=items.length?`<span class="corr-badge" style="background:${bg};color:${fg}">${items.length} issue${items.length>1?"s":""}</span>`:"";
-  const body=!items.length
-    ?`<p class="no-err">✓ No ${title.toLowerCase()} errors — great job!</p>`
-    :`<ul class="err-list">${items.map(it=>`<li class="err-item"><span class="dot" style="background:${dot}"></span><div>${render(it)}</div></li>`).join("")}</ul>`;
-  d.innerHTML=`<div class="corr-head"><div class="corr-icon" style="background:${bg};color:${fg}">${icon}</div><span class="corr-title">${title}</span>${badge}</div><div class="corr-body">${body}</div>`;
-  return d;
-}
-
-function tryAgain(){document.getElementById("utext").value="";wcUpdate();show("practice");}
-function newTopic(){document.getElementById("utext").value="";wcUpdate();loadImg();show("practice");}
+checkBtn.addEventListener("click", checkGuess);
+letterInput.addEventListener("keydown", e => { if(e.key === "Enter") checkGuess(); });
 </script>
+
 </body>
 </html>
